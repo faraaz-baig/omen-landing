@@ -14,7 +14,7 @@ export default function Home() {
           fill
           priority
           sizes="100vw"
-          className="ken-burns object-cover object-[62%_center] sm:object-center"
+          className="object-cover object-[62%_center] sm:object-center"
         />
 
         {/* the lower band of the frame runs bright in patches (max L≈251),

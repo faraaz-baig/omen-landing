@@ -71,20 +71,6 @@ body {
   );
 }
 
-/* a slow settle, so the frame is never quite static on arrival */
-@keyframes ken-burns {
-  from {
-    transform: scale(1.055);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-.ken-burns {
-  animation: ken-burns 18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
 /* ── entrance ─────────────────────────────────────────────────────────── */
 
 @keyframes rise {
@@ -126,8 +112,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rise,
-  .ken-burns {
+  .rise {
     animation-duration: 1ms;
     animation-delay: 0ms !important;
   }
