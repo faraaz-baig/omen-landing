@@ -7,7 +7,12 @@ export default function Home() {
           Calvin Klein's arrangement: full-bleed media, zero radius, zero
           gutter, no header, and one centred text stack sitting low in the
           frame rather than optically centred. */}
-      <section className="relative h-[100svh] w-full overflow-hidden">
+      {/* dvh, not svh: svh is the viewport height with the mobile address bar
+          expanded — its smallest value. Once the bar retracts on scroll the
+          visual viewport grows and an svh-sized hero no longer reaches the
+          bottom of the screen. dvh tracks the live viewport so the frame stays
+          full-bleed through that transition. */}
+      <section className="relative h-[100dvh] w-full overflow-hidden">
         <Image
           src="/hero-mirror.jpg"
           alt="A woman studying her reflection in a mirror in a bright empty studio"
