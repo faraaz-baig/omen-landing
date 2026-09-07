@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../node_modules/streamdown/dist/*.js";
 
 :root {
   color-scheme: light;
@@ -87,6 +88,30 @@ body {
   animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Speech bubble: swings a few times off its tail, then settles level. */
+@keyframes wobble {
+  0% { transform: rotate(0deg); }
+  18% { transform: rotate(-3.4deg); }
+  38% { transform: rotate(2.4deg); }
+  58% { transform: rotate(-1.5deg); }
+  78% { transform: rotate(0.7deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.wobble {
+  transform-origin: left center;
+  animation: wobble 1.5s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+/* Intro already played this visit — show the finished document, no replay. */
+.no-intro .rise {
+  opacity: 1;
+  animation: none;
+}
+.no-intro .wobble {
+  animation: none;
+}
+
 /* ── atmosphere ───────────────────────────────────────────────────────── */
 
 .grain::after {
@@ -114,7 +139,69 @@ body {
     animation-duration: 1ms;
     animation-delay: 0ms !important;
   }
+  .wobble {
+    animation: none;
+  }
   .grain::after {
     animation: none;
   }
+}
+
+
+/* ── chat template surface, re-skinned Calvin Klein ─────────────────────
+   The ported eve-chat-template styles itself entirely through these shadcn
+   variables, so the whole UI re-themes here: paper surfaces, ink type, one
+   ember accent, zero radius, hairline borders. No dark mode. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+  --font-sans: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+}
+
+:root {
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: #f4f4f3;
+  --secondary-foreground: var(--ink);
+  --muted: #f4f4f3;
+  --muted-foreground: var(--ink-2);
+  --accent: #f4f4f3;
+  --accent-foreground: var(--ink);
+  --destructive: var(--ember);
+  --border: #e7e6e4;
+  --input: #e7e6e4;
+  --ring: var(--ink);
+  --radius: 0px;
 }

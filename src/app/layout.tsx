@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Jost } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +12,15 @@ const display = Jost({
 
 export const metadata: Metadata = {
   title: "heyomen.com",
+};
+
+/* viewportFit: "cover" is what makes env(safe-area-inset-*) resolve to a real
+   number on notched phones — without it the fixed composer sits under the
+   home indicator. */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
