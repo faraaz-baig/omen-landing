@@ -32,6 +32,19 @@ body {
   color: var(--ink);
 }
 
+/* Tailwind v4's preflight no longer sets cursor: pointer on buttons — it
+   defers to the browser default of `default`. Restore it once here rather
+   than per-button, so anything added later inherits the behaviour. Disabled
+   controls keep the default arrow: the Ask button is disabled while the
+   input is empty, and a pointer there would promise a click that does
+   nothing. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label,
+summary {
+  cursor: pointer;
+}
+
 body {
   font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
