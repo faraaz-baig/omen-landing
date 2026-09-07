@@ -8,11 +8,16 @@ import { getChatPassword, getPasswordSessionFromHeaders } from "@/lib/password-a
  * funded model endpoint — neither may be open to the internet. The marketing
  * page at `/` stays public.
  *
- * Proxy runs before `beforeFiles` rewrites in the routing chain, so this fires
- * ahead of the rewrite that hands `/eve/v1/*` to the agent service. Gating here
- * covers the API without touching eve's own routing. Proxy also defaults to the
- * Node.js runtime in Next 16, which is what makes the node:crypto HMAC in
- * password-auth usable at this layer.
+ * The `/eve/*` branch below only bites in local dev, where eve's routes arrive
+ * through a Next rewrite that Proxy precedes. On Vercel the agent is a separate
+ * service and the platform routes /eve/* straight to it, bypassing Next
+ * entirely — verified in production, where an unauthenticated /eve/v1/health
+ * returned 200 and /eve/v1/sessions 404'd from eve's own router rather than
+ * 401'ing here. The agent's real gate is its channel auth walk in
+ * omen-agent/agent/channels/eve.ts, which checks the same cookie.
+ *
+ * Proxy defaults to the Node.js runtime in Next 16, which is what makes the
+ * node:crypto HMAC in password-auth usable at this layer.
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
