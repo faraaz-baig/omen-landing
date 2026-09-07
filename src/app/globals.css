@@ -1,47 +1,117 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* matte black — near-zero chroma, lifted just off pure #000 so it reads as
-     a surface rather than a void */
-  --background: #070708;
-  --foreground: #f2eee6;
+  --paper: #ffffff;
+  --ink: #17191a;
+  --ink-2: #5b5f60;
 
-  /* helix palette, mirrored in Helix.tsx */
-  --near: #f2eee6;
-  --far: #5c686e;
+  /* the one accent — CTA and hover only, never in photography */
+  --ember: #a6381f;
+
+  /* hero scrim: the lower third of the frame is already dark (mean L≈86),
+     so we deepen rather than wash. a white scrim would grey the navy. */
+  /* space-separated: required for the rgb(var(--scrim) / alpha) slash form.
+     commas here silently invalidate every gradient stop that uses it. */
+  --scrim: 11 12 13;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-display: var(--font-fraunces);
-  --font-mono: var(--font-plex-mono);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ember: var(--ember);
+  --font-display: var(--font-display);
 }
 
 html,
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 body {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
+/* ── type ─────────────────────────────────────────────────────────────── */
+
+/* Calvin Klein's hero, measured at 1440px: 69.12px (4.8vw) / lh 1.0 /
+   letter-spacing −3.2px (−0.046em) / KleinLight. The heavy negative
+   tracking is what makes it read as CK rather than generic thin grotesk.
+
+   Six words over two lines matches CK's own shape, so this runs at their
+   measured size. Leading and tracking are opened off CK's values — 1.0/−0.046
+   is very tight, and at two stacked lines it wants air. */
+.display {
+  font-size: clamp(2.125rem, 4.8vw, 4.32rem);
+  font-weight: 300;
+  line-height: 1.14;
+  letter-spacing: -0.022em;
+}
+
+/* ── hero ─────────────────────────────────────────────────────────────── */
+
+/* the frame is high-key almost everywhere, so the type needs a real floor.
+   weighted to the bottom third — where the navy trousers already sit — so it
+   deepens an existing shadow rather than fogging the bright studio. */
+.hero-scrim {
+  background: linear-gradient(
+    to top,
+    rgb(var(--scrim) / 0.78) 0%,
+    rgb(var(--scrim) / 0.68) 16%,
+    rgb(var(--scrim) / 0.52) 30%,
+    rgb(var(--scrim) / 0.38) 44%,
+    rgb(var(--scrim) / 0.22) 58%,
+    rgb(var(--scrim) / 0.08) 68%,
+    transparent 78%
+  );
+}
+
+/* a slow settle, so the frame is never quite static on arrival */
+@keyframes ken-burns {
+  from {
+    transform: scale(1.055);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.ken-burns {
+  animation: ken-burns 18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── entrance ─────────────────────────────────────────────────────────── */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  opacity: 0;
+  animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* ── atmosphere ───────────────────────────────────────────────────────── */
 
-/* film grain: a single inline turbulence tile, screened over everything */
 .grain::after {
   content: "";
   position: fixed;
   inset: -50%;
   pointer-events: none;
   z-index: 50;
-  opacity: 0.055;
+  opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain-drift 6s steps(6) infinite;
 }
@@ -55,38 +125,9 @@ body {
   100% { transform: translate(0, 0); }
 }
 
-/* the helix sits in a pool of light rather than on flat black */
-.pool {
-  background: radial-gradient(
-    32% 30% at 50% 50%,
-    rgba(210, 216, 214, 0.05) 0%,
-    rgba(150, 162, 166, 0.02) 40%,
-    transparent 74%
-  );
-}
-
-/* ── entrance ─────────────────────────────────────────────────────────── */
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    filter: blur(10px);
-    transform: translateY(10px) scale(0.965);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: none;
-  }
-}
-
-.rise {
-  opacity: 0;
-  animation: rise 1.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .rise {
+  .rise,
+  .ken-burns {
     animation-duration: 1ms;
     animation-delay: 0ms !important;
   }

@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Mono } from "next/font/google";
+import { Jost } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+/* Jost — geometric, Futura-lineage. Light (300) for display; the heavy
+   negative tracking lives on .display in globals.css. */
+const display = Jost({
+  variable: "--font-display",
   subsets: ["latin"],
-  axes: ["SOFT", "WONK", "opsz"],
-});
-
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
-  subsets: ["latin"],
-  weight: ["400"],
+  weight: ["200", "300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -20,13 +16,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${fraunces.variable} ${plexMono.variable} h-full antialiased`}
-    >
-      <body className="grain min-h-full flex flex-col bg-background">
-        {children}
-      </body>
+    <html lang="en" className={`${display.variable} h-full antialiased`}>
+      <body className="grain bg-paper text-ink min-h-full">{children}</body>
     </html>
   );
 }
