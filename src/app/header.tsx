@@ -49,16 +49,16 @@ export function SiteHeader() {
         a 320px screen once the button is beside it.
       */}
       <span
-        // Padding, not min-height, to match the button's 44px. min-h with a
-        // baseline-aligned flex row leaves the content sitting at the top of
-        // the taller box rather than centred in it.
+        // Asymmetric padding, deliberately. Centring the line box leaves the
+        // caps high, because the box reserves descender depth that uppercase
+        // type never uses. Measuring the inked cap height against the panel
+        // centre put it 0.6px high, so 0.6px sits in the top padding rather
+        // than the bottom: the ink centres, the height is unchanged.
         //
-        // The 1.2px asymmetry is deliberate and must survive any height
-        // change. Centring the line box leaves the caps high, because the box
-        // reserves descender depth that uppercase type never uses; measuring
-        // the inked cap height against the panel centre put it 0.6px high, so
-        // 0.6px sits in the top padding rather than the bottom.
-        className={`flex items-baseline gap-2.5 border px-4 pt-[13.6px] pb-[12.4px] leading-none uppercase transition-colors duration-300 ${panel}`}
+        // Height here is font-size + 22px (20 padding, 2 border): 37px on a
+        // phone at 15px type, 38px from sm at 16px. The button is pinned to
+        // those two numbers.
+        className={`flex items-baseline gap-2.5 border px-4 pt-[10.6px] pb-[9.4px] leading-none uppercase transition-colors duration-300 ${panel}`}
       >
         <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
           Omen
@@ -100,9 +100,10 @@ export function SiteHeader() {
       </span>
 
       <button
-        // min-h-11: padding alone left this at 38px, under the 44px minimum
-        // comfortable tap target on a phone.
-        className={`inline-flex min-h-11 items-center border px-5 text-[12px] leading-none font-medium tracking-[0.16em] uppercase transition-colors duration-300 sm:px-6 sm:text-[13px] ${
+        // Height pinned to the lockup's, which is padding-driven and so
+        // changes with its font size. Below the 44px comfortable tap target,
+        // accepted here to keep the two panels the same height.
+        className={`inline-flex h-[37px] items-center border px-5 sm:h-[38px] text-[12px] leading-none font-medium tracking-[0.16em] uppercase transition-colors duration-300 sm:px-6 sm:text-[13px] ${
           scrolled
             ? "border-ink/15 bg-ink/90 text-paper backdrop-blur-md hover:bg-ink"
             : "border-transparent bg-transparent text-ink hover:text-ink-2"
