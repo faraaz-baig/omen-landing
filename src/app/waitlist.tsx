@@ -1,9 +1,52 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { joinWaitlist } from "./actions/waitlist";
 
-type State = "idle" | "sending" | "done";
+/**
+ * Pending state comes from useFormStatus, not local state. `<form action={fn}>`
+ * runs the action inside a transition, so a setState("sending") made there is a
+ * deferred update React may never commit before the action resolves — the
+ * loading label simply would not paint. useFormStatus reads the form's real
+ * in-flight status, which is why this has to be a child of the form.
+ */
+function FormFields({ error }: { error: string | null }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <>
+      {/* rule under the field rather than a box: closer to the type-led
+          treatment on the rest of the page than a bordered input */}
+      <input
+        aria-label="Email address"
+        autoComplete="email"
+        className="mt-7 w-full border-b border-ink/20 bg-transparent pb-3 text-[17px] leading-7 outline-none transition-colors placeholder:text-ink-2/50 focus:border-ink"
+        disabled={pending}
+        name="email"
+        placeholder="you@example.com"
+        required
+        type="email"
+      />
+
+      <p aria-live="polite" className="min-h-[1.25rem]">
+        {error && (
+          <span className="mt-2 block text-[13px] text-ember">{error}</span>
+        )}
+      </p>
+
+      <button
+        className="mt-4 w-full bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 disabled:opacity-40"
+        disabled={pending}
+        type="submit"
+      >
+        {pending ? "Loading\u2026" : "Request a kit"}
+      </button>
+    </>
+  );
+}
+
+type State = "idle" | "done";
 
 /**
  * Trigger + modal. Native <dialog> rather than a div: showModal() gives focus
@@ -36,12 +79,10 @@ export function WaitlistCta() {
 
   const submit = async (formData: FormData) => {
     setError(null);
-    setState("sending");
     const result = await joinWaitlist(String(formData.get("email") ?? ""));
     if (result.ok) {
       setState("done");
     } else {
-      setState("idle");
       setError(result.message);
     }
   };
@@ -98,34 +139,7 @@ export function WaitlistCta() {
               kit.
             </p>
 
-            {/* rule under the field rather than a box: closer to the type-led
-                treatment on the rest of the page than a bordered input */}
-            <input
-              aria-label="Email address"
-              autoComplete="email"
-              className="mt-7 w-full border-b border-ink/20 bg-transparent pb-3 text-[17px] leading-7 outline-none transition-colors placeholder:text-ink-2/50 focus:border-ink"
-              disabled={state === "sending"}
-              name="email"
-              placeholder="you@example.com"
-              required
-              type="email"
-            />
-
-            <p aria-live="polite" className="min-h-[1.25rem]">
-              {error && (
-                <span className="mt-2 block text-[13px] text-ember">
-                  {error}
-                </span>
-              )}
-            </p>
-
-            <button
-              className="mt-4 w-full bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 disabled:opacity-40"
-              disabled={state === "sending"}
-              type="submit"
-            >
-              {state === "sending" ? "…" : "Request a kit"}
-            </button>
+            <FormFields error={error} />
           </form>
         )}
       </dialog>

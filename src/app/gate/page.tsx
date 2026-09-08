@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { SubmitButton } from "./submit-button";
 import {
   PASSWORD_SESSION_COOKIE_NAME,
   PASSWORD_SESSION_MAX_AGE,
@@ -61,12 +62,7 @@ export default async function Gate({
           </p>
         )}
 
-        <button
-          className="mt-4 w-full bg-ink py-3 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85"
-          type="submit"
-        >
-          Enter
-        </button>
+        <SubmitButton>Enter</SubmitButton>
       </form>
     </main>
   );
