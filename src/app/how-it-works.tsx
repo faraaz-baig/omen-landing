@@ -47,12 +47,14 @@ export function HowItWorks() {
         <p className="text-[11px] font-medium tracking-[0.2em] text-ink-2 uppercase">
           How it works
         </p>
-        <h2 className="mt-5 max-w-[18ch] text-[28px] leading-[1.15] tracking-[-0.02em] text-balance sm:text-[40px]">
-          One tube. Everyone.
+        <h2 className="mt-5 max-w-[20ch] text-[28px] leading-[1.15] tracking-[-0.02em] text-balance sm:text-[40px]">
+          Spit in a tube. That&rsquo;s the invasive part.
         </h2>
         <p className="mt-5 max-w-[52ch] text-[17px] leading-8 text-ink-2 sm:text-[19px]">
-          You spit in a tube and post it back. That is the whole ask. What comes
-          back is a read of your own biology, explained in plain English.
+          No needles, no clinic, no appointment. What comes back isn&rsquo;t
+          ancestry trivia. It&rsquo;s how your body handles the medication you
+          actually get prescribed, read against clinical prescribing guidelines
+          and explained in plain English.
         </p>
 
         {/*
