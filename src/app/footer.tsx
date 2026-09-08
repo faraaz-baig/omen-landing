@@ -22,7 +22,7 @@ export function SiteFooter() {
         </span>
 
         <p className="mt-8 text-[13px] leading-6 text-paper/50 sm:text-[14px]">
-          Copyright © 2026 Omen Division, Inc. All rights reserved.
+          © 2026 Omen Division, Inc. All rights reserved.
         </p>
       </div>
     </footer>
