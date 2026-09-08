@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { WaitlistCta } from "./waitlist";
 
 export default function Home() {
   return (
@@ -51,19 +52,9 @@ export default function Home() {
             choices about your diet, medication and treatment.
           </p>
 
-          {/* CTA disabled for now — restore when the waitlist has somewhere to
-              post to. Notes for when it comes back: uppercase needs tracking to
-              breathe, and the trailing letter-space pushes the underline past
-              the final glyph, so the negative margin cancels it and keeps the
-              rule flush and centred.
-
-          <a
-            href="#"
-            className="mt-7 -mr-[0.14em] inline-block border-b border-white/70 pb-[5px] text-[12px] leading-none font-medium tracking-[0.14em] text-white uppercase transition-colors hover:border-white sm:text-[13px]"
-          >
-            Join the waitlist
-          </a>
-          */}
+          {/* The waitlist now has somewhere to post to (waitlist_signups), so
+              the CTA is back. Its type notes moved with it into WaitlistCta. */}
+          <WaitlistCta />
         </div>
       </section>
     </main>
