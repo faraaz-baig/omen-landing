@@ -11,11 +11,16 @@
   /* the one accent — CTA and hover only, never in photography */
   --ember: #a6381f;
 
-  /* hero scrim: the lower third of the frame is already dark (mean L≈86),
-     so we deepen rather than wash. a white scrim would grey the navy. */
+  /* hero scrim: espresso, not blue-black — the golden-hour frame reads warm
+     everywhere, and a cool scrim greys it. Espresso deepens the photo's own
+     shadows, and the navy trousers still anchor the lower third. */
   /* space-separated: required for the rgb(var(--scrim) / alpha) slash form.
      commas here silently invalidate every gradient stop that uses it. */
-  --scrim: 11 12 13;
+  --scrim: 26 18 12;
+
+  /* footer panel: the scrim color as a surface. Darker than a tint of --ink
+     would be, and warm where --ink is cool. */
+  --espresso: #1c1713;
 }
 
 @theme inline {
@@ -23,6 +28,7 @@
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ember: var(--ember);
+  --color-espresso: var(--espresso);
   --font-display: var(--font-display);
 }
 
@@ -220,34 +226,12 @@ body {
   }
 }
 
-/* Section-by-section scrolling: a short gesture settles the next section into
-   place rather than leaving the page stranded between two. The threshold is
-   500px, not the 700px it once was: media queries measure the layout viewport,
-   which on a phone includes the address bar, so an 844pt iPhone reports ~660px
-   and a 700px floor silently switched snapping off on every real phone. A
-   section slightly taller than a short viewport is fine — a snap area larger
-   than the snapport scrolls freely within itself — so the guard only needs to
-   exclude genuinely cramped viewports (landscape phones), where hijacking the
-   scroll fights the reader. Skipped under reduced-motion for the same reason. */
-@media (min-height: 500px) and (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
-
-  main > section {
-    scroll-snap-align: start;
-  }
-
-  /* End-aligned, not start: snapping this short band to the top of the screen
-     would leave the page mostly empty. But it must be *some* snap position —
-     with none, mandatory snapping treats the bottom of the page as an illegal
-     resting place and throws the scroll back to the last section, leaving the
-     footer unreachable (measured: scroll to 887 settles at 677). Aligning its
-     end pins the footer to the bottom edge with the section filling the rest. */
-  footer {
-    scroll-snap-align: end;
-  }
-}
+/* Scroll snapping is gone, deliberately. It was built for the old page shape
+   — every section exactly one viewport tall — where a short gesture settling
+   the next section into place felt intentional. The current page has one tall
+   mid-page section and a short footer, so mandatory snapping had exactly one
+   interior snap point and yanked every scroll position to it. Free scroll is
+   correct until the page returns to viewport-sized sections. */
 
 /* ── atmosphere ───────────────────────────────────────────────────────── */
 

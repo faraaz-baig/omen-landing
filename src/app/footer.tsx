@@ -1,11 +1,12 @@
 /**
- * Black band closing the page, following Calvin Klein's footer arrangement:
- * everything stacked on the left margin rather than split across the width,
- * the mark set large at the top, and the legal line small and grey beneath it.
+ * The footer is a rounded espresso panel sitting in the same gutter as the
+ * hero frame — the page opens with a framed photograph and closes with a
+ * framed dark surface, same radius, same inset. Espresso rather than --ink:
+ * the panel belongs to the golden photography above it, not to the cool text
+ * color.
  *
- * The legal line is sentence case, not the tracked uppercase used elsewhere on
- * the site. CK sets its own legal row that way, and at this size uppercase
- * with letter-spacing reads as a label rather than as fine print.
+ * Links are only the ones with somewhere to go; FAQs/Privacy/Contact from the
+ * design boards return when those pages exist.
  *
  * The year is a literal. `new Date()` in a server component either forces the
  * route dynamic or bakes the build year in anyway, so it would still go stale,
@@ -13,17 +14,41 @@
  */
 export function SiteFooter() {
   return (
-    // Gutter outside the max-width, matching the section above. Padding inside
-    // it insets the content a further 32px and the footer stops lining up.
-    <footer className="bg-ink px-5 text-paper sm:px-8">
-      <div className="mx-auto max-w-6xl py-16 sm:py-20">
-        <span className="block text-[26px] leading-none font-medium tracking-[0.22em] uppercase sm:text-[30px]">
-          Omen
-        </span>
+    <footer className="px-3 pb-3 sm:px-5 sm:pb-5">
+      <div className="rounded-[var(--radius-frame)] bg-espresso px-6 pt-9 pb-6 sm:px-16 sm:pt-12 sm:pb-8">
+        <div className="flex flex-col gap-7 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <span className="block text-[15px] leading-none font-medium tracking-[0.22em] text-paper uppercase sm:text-[16px]">
+              Omen
+            </span>
+            <span className="mt-2.5 block text-[10px] leading-none tracking-[0.18em] text-white/55 uppercase">
+              The personal genomics company
+            </span>
+          </div>
+          <nav className="flex items-center gap-6 sm:gap-8">
+            <a
+              className="text-[11px] font-medium tracking-[0.16em] text-white/75 uppercase transition-colors hover:text-white"
+              href="#how-it-works"
+            >
+              How it works
+            </a>
+            <a
+              className="text-[11px] font-medium tracking-[0.16em] text-white/75 uppercase transition-colors hover:text-white"
+              href="/gate"
+            >
+              Log in
+            </a>
+          </nav>
+        </div>
 
-        <p className="mt-8 text-[13px] leading-6 text-paper/50 sm:text-[14px]">
-          © 2026 Omen Division, Inc. All rights reserved.
-        </p>
+        <div className="mt-12 flex items-center justify-between border-t border-white/12 pt-5 sm:mt-14 sm:pt-6">
+          <span className="text-[10px] leading-none tracking-[0.14em] text-white/45 uppercase sm:text-[11px]">
+            © 2026 Omen Division, Inc.
+          </span>
+          <span className="text-[10px] leading-none tracking-[0.14em] text-white/45 uppercase sm:text-[11px]">
+            Know what works for your body
+          </span>
+        </div>
       </div>
     </footer>
   );

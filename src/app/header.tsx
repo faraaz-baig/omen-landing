@@ -1,84 +1,114 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useWaitlist } from "./waitlist";
 
 /**
- * In-flow header above the hero frame, on paper. It used to float fixed over
- * the photograph with a scroll-triggered frosted panel; both went away when
- * the hero became an inset box with the header sitting above it — there is
- * nothing behind the header to frost any more, and it scrolls with the page.
+ * Two headers, one component. At the top of the page: a three-zone in-flow
+ * band — nav left, the wordmark lockup dead-center (absolutely positioned so
+ * uneven zones can never shift it), actions right. Once that band scrolls
+ * away, a condensed capsule fixes itself to the top edge: frosted espresso,
+ * rounded bottom corners only (it hangs from the viewport, so its top edge
+ * is the viewport's), everything one size down, and the CTA inverted to
+ * paper. Superpower's scroll trick in Omen's materials.
  *
- * Horizontal padding matches the hero frame's gutter (px-3 / sm:px-5) so the
- * wordmark and button align with the box edges below, and the vertical
- * padding repeats the same values so the header band reads as part of the
- * same frame.
+ * The capsule stays mounted and slides in/out rather than mounting on
+ * scroll: mounting mid-scroll would replay its backdrop-filter paint and
+ * flash. Threshold 120px ≈ just past the expanded header, so the two never
+ * show together.
  */
 export function SiteHeader() {
   const open = useWaitlist();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 120);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="flex items-center justify-between gap-4 px-3 py-3 sm:px-5 sm:py-5">
-      {/*
-        A lockup, not one string. The descriptor is set smaller, lighter and on
-        tighter tracking so "Omen" still reads as the mark rather than the two
-        becoming one long line of evenly spaced capitals.
-
-        It is hidden below sm: at 0.22em tracking the full lockup is wider than
-        a 320px screen once the button is beside it.
-      */}
-      <span
-        // No panel padding or ghost border: those were sized for the frosted
-        // panel this used to sit in over the photo. Bare type on paper needs
-        // neither, and the wordmark now starts flush at the header's gutter,
-        // aligned with the banner edge below it.
-        className="flex items-baseline gap-2.5 leading-none uppercase"
-      >
-        <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
+    <>
+      <header className="relative flex h-14 items-center justify-between px-4 sm:h-[92px] sm:px-5">
+        <span className="text-[15px] leading-none font-medium tracking-[0.22em] text-ink uppercase sm:hidden">
           Omen
         </span>
-        {/* A middot at descriptor size all but vanishes between two runs of
-            tracked capitals, so it is set much larger. leading-[0] collapses
-            its line box: at 24px it is otherwise taller than the type beside
-            it, and under items-baseline that surplus lands above the shared
-            baseline and pushes the whole lockup 3px below its panel centre.
 
-            No nudge. The glyph's ink runs from 7.08px to 4.44px above the
-            baseline, centring it 5.76px up, while OMEN's caps centre 5.88px
-            up — a 0.12px difference. It is already on the cap-height centre. */}
-        <span
-          aria-hidden
-          className="hidden text-[24px] leading-[0] text-ink/45 sm:inline"
-        >
-          ·
-        </span>
-        {/*
-          Lifted 1.75px. The row is baseline-aligned, which is right for the
-          horizontal rhythm but means the descriptor's shorter caps centre
-          lower than the wordmark's: measured 1.75px below it, and below the
-          panel centre with it. The shift aligns the two cap-height centres
-          without breaking the shared baseline for the rest of the row.
+        <nav className="hidden items-center gap-9 sm:flex">
+          <a
+            className="text-[12px] font-medium tracking-[0.16em] text-ink uppercase transition-colors hover:text-ink-2"
+            href="#how-it-works"
+          >
+            How it works
+          </a>
+        </nav>
 
-          A px value, not em: the descriptor is 11px at every width it is
-          visible at, and the wordmark it aligns to is 16px there.
-        */}
-        <span className="hidden -translate-y-[1.75px] text-[11px] tracking-[0.14em] text-ink sm:inline">
-          The personal genomics company
-        </span>
-      </span>
+        <div className="pointer-events-none absolute inset-0 hidden flex-col items-center justify-center gap-1.5 sm:flex">
+          <span className="text-[18px] leading-none font-medium tracking-[0.22em] text-ink uppercase">
+            Omen
+          </span>
+          <span className="text-[10px] leading-none tracking-[0.18em] text-ink-2 uppercase">
+            The personal genomics company
+          </span>
+        </div>
 
-      <button
-        // Below the 44px comfortable tap target, accepted for how light this
-        // header runs; the bare lockup no longer dictates a height to match.
-        //
-        // Hairline border, ink on hover: on paper the button no longer has a
-        // photograph to sit against, so it takes the site's bordered-panel
-        // treatment instead of the transparent-then-frosted overlay states.
-        className="inline-flex h-[37px] items-center rounded-[var(--radius-frame)] border border-ink/15 bg-transparent px-5 text-[12px] leading-none font-medium tracking-[0.16em] text-ink uppercase transition-colors duration-300 hover:bg-ink hover:text-paper sm:h-[38px] sm:px-6 sm:text-[13px]"
-        onClick={open}
-        type="button"
+        <div className="flex items-center gap-4 sm:gap-7">
+          <Link
+            className="hidden text-[12px] font-medium tracking-[0.16em] text-ink uppercase transition-colors hover:text-ink-2 sm:inline"
+            href="/gate"
+          >
+            Log in
+          </Link>
+          <button
+            className="flex h-8 items-center rounded-[4px] bg-ink px-4 text-[11px] leading-none font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 sm:h-10 sm:rounded-[var(--radius-frame)] sm:px-6 sm:text-[12px]"
+            onClick={open}
+            type="button"
+          >
+            Get a kit
+          </button>
+        </div>
+      </header>
+
+      {/* aria-hidden + inert-ish pointer handling while offscreen, so the
+          capsule's controls never tab-focus or catch clicks before it shows.
+          The duplicate controls are hidden from assistive tech entirely when
+          offscreen; when visible they are the only header on screen. */}
+      <div
+        aria-hidden={!scrolled}
+        className={`fixed inset-x-0 top-0 z-40 flex justify-center transition-[transform,opacity] duration-300 motion-reduce:transition-none ${
+          scrolled ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0"
+        }`}
       >
-        Get a kit
-      </button>
-    </header>
+        <div className="flex h-[52px] items-center gap-5 rounded-b-[8px] bg-[rgb(28_23_19/0.62)] px-2.5 pl-5 backdrop-blur-[18px] sm:h-[58px] sm:gap-8 sm:pl-7">
+          <a
+            className="hidden text-[11px] font-medium tracking-[0.16em] text-white/90 uppercase transition-colors hover:text-white sm:inline"
+            href="#how-it-works"
+            tabIndex={scrolled ? 0 : -1}
+          >
+            How it works
+          </a>
+          <span className="text-[14px] leading-none font-medium tracking-[0.22em] text-white uppercase sm:text-[15px]">
+            Omen
+          </span>
+          <Link
+            className="hidden text-[11px] font-medium tracking-[0.16em] text-white/90 uppercase transition-colors hover:text-white sm:inline"
+            href="/gate"
+            tabIndex={scrolled ? 0 : -1}
+          >
+            Log in
+          </Link>
+          <button
+            className="flex h-9 items-center rounded-[var(--radius-frame)] bg-paper px-4 text-[11px] leading-none font-medium tracking-[0.16em] text-ink uppercase transition-opacity hover:opacity-90 sm:px-5"
+            onClick={open}
+            tabIndex={scrolled ? 0 : -1}
+            type="button"
+          >
+            Get a kit
+          </button>
+        </div>
+      </div>
+    </>
   );
 }

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { SiteHeader } from "./header";
-import { WaitlistCta, WaitlistProvider } from "./waitlist";
-// Testing section and footer are parked, not deleted — they return as-is.
-// import { SiteFooter } from "./footer";
+import { SiteFooter } from "./footer";
+import { HeroCapture } from "./hero-capture";
+import { HowItWorks } from "./how-it-works";
+import { WaitlistProvider } from "./waitlist";
+// Testing section is parked, not deleted — it returns as-is.
 // import { Testing } from "./testing";
 
 export default function Home() {
@@ -33,8 +35,8 @@ export default function Home() {
           <section className="min-h-0 flex-1 sm:px-5 sm:pb-5">
             <div className="relative h-full w-full overflow-hidden sm:rounded-[var(--radius-frame)]">
               <Image
-                src="/hero-mirror.jpg"
-                alt="A woman studying her reflection in a mirror in a bright empty studio"
+                src="/hero-golden.jpg"
+                alt="A woman studying her reflection in a mirror in a warm sunlit studio"
                 fill
                 priority
                 /* `sizes` must describe the crop, not the viewport. This is a 16:9
@@ -46,10 +48,10 @@ export default function Home() {
              and undersized on a phone. Landscape viewports crop the other way
              and genuinely only need 100vw. */
                 sizes="(max-aspect-ratio: 3/4) 200vw, 100vw"
-                className="object-cover object-[62%_center] sm:object-center"
+                className="object-cover object-[42%_center] sm:object-center"
               />
 
-              {/* the lower band of the frame runs bright in patches (max L≈251),
+              {/* the bottom of the frame runs from pale floor to sunlit wall,
             so centred white type needs a floor to sit on */}
               <div className="hero-scrim pointer-events-none absolute inset-0" />
               {/* CK's text block is absolutely positioned, full-width, centred,
@@ -58,34 +60,34 @@ export default function Home() {
               {/* no `rise` here: the hero copy is present from first paint.
                 The entrance fade stays in globals.css for the preview demo,
                 which staggers it per beat. */}
-              <div className="absolute inset-x-0 bottom-[clamp(2.5rem,5vh,4rem)] z-10 px-6 text-center">
+              <div className="absolute inset-x-0 bottom-[clamp(1.75rem,4vh,3.5rem)] z-10 px-4 text-center sm:px-6">
                 {/* breaks are explicit, not left to the browser: they keep every
               line inside the darker centre of the frame rather than spilling
-              onto the bright wall and white vest at the edges. */}
+              onto the brighter walls at the edges. */}
                 <h1 className="display mx-auto max-w-[16ch] text-white">
                   Know what works
                   <br />
                   for your body.
                 </h1>
 
-                <p className="mx-auto mt-[34px] max-w-[46ch] text-[17px] leading-7 font-normal text-balance text-white/85 sm:text-[19px] sm:leading-8">
+                <p className="mx-auto mt-[clamp(1rem,3vh,2.125rem)] max-w-[46ch] text-[15px] leading-6 font-normal text-balance text-white/85 sm:text-[19px] sm:leading-8">
                   We read your DNA and tell you which medications suit your
                   body, which don&rsquo;t, and what your diet and skin actually
                   need. In plain English.
                 </p>
 
-                {/* The waitlist now has somewhere to post to (waitlist_signups), so
-              the CTA is back. Its type notes moved with it into WaitlistCta. */}
-                <WaitlistCta />
+                <HeroCapture />
               </div>
             </div>
           </section>
         </div>
 
+        <HowItWorks />
+
         {/* <Testing /> */}
       </main>
 
-      {/* <SiteFooter /> */}
+      <SiteFooter />
     </WaitlistProvider>
   );
 }
