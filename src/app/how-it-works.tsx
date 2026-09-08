@@ -44,10 +44,7 @@ export function HowItWorks() {
   return (
     <section className="px-5 py-24 sm:px-8 sm:py-32">
       <div className="mx-auto max-w-6xl">
-        <p className="text-[11px] font-medium tracking-[0.2em] text-ink-2 uppercase">
-          How it works
-        </p>
-        <h2 className="mt-5 max-w-[20ch] text-[28px] leading-[1.15] tracking-[-0.02em] text-balance sm:text-[40px]">
+        <h2 className="max-w-[20ch] text-[28px] leading-[1.15] tracking-[-0.02em] text-balance sm:text-[40px]">
           Spit in a tube.
         </h2>
         <p className="mt-5 max-w-[52ch] text-[17px] leading-8 text-ink-2 sm:text-[19px]">
