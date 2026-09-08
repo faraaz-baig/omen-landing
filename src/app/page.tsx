@@ -18,7 +18,15 @@ export default function Home() {
           alt="A woman studying her reflection in a mirror in a bright empty studio"
           fill
           priority
-          sizes="100vw"
+          /* `sizes` must describe the crop, not the viewport. This is a 16:9
+             photo covering a portrait box, so the browser scales it until its
+             HEIGHT fits and the width overflows — on a 390x844 phone that needs
+             844 * (2752/1536) = ~1512 CSS px, roughly 4x the viewport width.
+             With "100vw" it fetched the 1200w variant for a 4537px device-pixel
+             requirement: a ~3.8x upscale, which is what made the hero look soft
+             and undersized on a phone. Landscape viewports crop the other way
+             and genuinely only need 100vw. */
+          sizes="(max-aspect-ratio: 3/4) 200vw, 100vw"
           className="object-cover object-[62%_center] sm:object-center"
         />
 
