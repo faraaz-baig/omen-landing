@@ -50,7 +50,14 @@ export function SiteHeader() {
         <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
           Omen
         </span>
-        <span aria-hidden className="hidden text-[11px] text-ink/40 sm:inline">
+        {/* A middot at descriptor size all but vanishes between two runs of
+            tracked capitals. Set large enough to read as a deliberate
+            separator, and nudged onto the optical centre of the cap height —
+            baseline alignment would hang it low. */}
+        <span
+          aria-hidden
+          className="hidden translate-y-[0.06em] text-[24px] leading-none text-ink/45 sm:inline"
+        >
           ·
         </span>
         {/*
