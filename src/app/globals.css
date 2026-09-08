@@ -173,6 +173,26 @@ body {
   }
 }
 
+/* Section-by-section scrolling: a short gesture settles the next section into
+   place rather than leaving the page stranded between two. Every width — the
+   image tiles are sized off viewport height precisely so no section outgrows
+   the screen — but only down to a point: the copy does not shrink with the
+   window, so on a short viewport the section outgrows it anyway (804px inside
+   640px at 320x640). Below 700px tall the page scrolls normally rather than
+   snapping to a section whose bottom cannot be reached. Skipped under
+   reduced-motion, where hijacking the scroll is exactly the wrong move. */
+@media (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+
+  /* The footer is deliberately not a snap point: it is a short band, and
+     snapping it to the top of the screen would leave the page mostly empty. */
+  main > section {
+    scroll-snap-align: start;
+  }
+}
+
 /* ── atmosphere ───────────────────────────────────────────────────────── */
 
 .grain::after {
