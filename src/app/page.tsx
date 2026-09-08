@@ -53,8 +53,9 @@ export default function Home() {
             </h1>
 
             <p className="mx-auto mt-[34px] max-w-[46ch] text-[17px] leading-7 font-normal text-balance text-white/85 sm:text-[19px] sm:leading-8">
-              We explain your DNA in plain English, so you can make informed
-              choices about your diet, medication and treatment.
+              We read your DNA and tell you which medications suit your body,
+              which don&rsquo;t, and what your diet and skin actually need. In
+              plain English.
             </p>
 
             {/* The waitlist now has somewhere to post to (waitlist_signups), so
