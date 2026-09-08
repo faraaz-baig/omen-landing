@@ -23,11 +23,11 @@ const SAMPLES: Sample[] = [
     alt: "A woman holding a saliva collection tube to her lower lip, eyes cast down",
   },
   {
-    src: null,
+    src: "/samples/black-man.jpg",
     alt: "A man leaning slightly forward, holding a saliva collection tube to his lips",
   },
   {
-    src: null,
+    src: "/samples/south-asian.jpg",
     alt: "A woman screwing the cap onto a filled saliva collection tube",
   },
   {
@@ -35,7 +35,7 @@ const SAMPLES: Sample[] = [
     alt: "A man holding a saliva collection tube to his lips, shoulders relaxed",
   },
   {
-    src: null,
+    src: "/samples/latina.jpg",
     alt: "A woman turning a capped saliva collection tube over in her fingers",
   },
 ];
