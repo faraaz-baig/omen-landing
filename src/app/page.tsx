@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { SiteFooter } from "./footer";
 import { SiteHeader } from "./header";
-import { HowItWorks } from "./how-it-works";
+import { Testing } from "./testing";
 import { WaitlistCta, WaitlistProvider } from "./waitlist";
 
 export default function Home() {
@@ -65,7 +65,7 @@ export default function Home() {
           </div>
         </section>
 
-        <HowItWorks />
+        <Testing />
       </main>
 
       <SiteFooter />
