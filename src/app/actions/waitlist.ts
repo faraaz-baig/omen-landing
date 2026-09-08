@@ -14,6 +14,9 @@ export type WaitlistResult = { ok: true } | { ok: false; message: string };
 const LOOKS_LIKE_EMAIL = /^[^\s@]+@[^\s@.]+\.[^\s@]+$/;
 
 export async function joinWaitlist(email: string): Promise<WaitlistResult> {
+  // Normalise before validating or storing, so "  Foo@Bar.com " and
+  // "foo@bar.com" are one person. sql/waitlist_signups.sql carries the same
+  // rule in its unique index, for writers that are not this function.
   const value = email.trim().toLowerCase();
 
   // Cap before touching the database: the column is unbounded text, so an
