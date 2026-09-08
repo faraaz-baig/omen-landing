@@ -76,7 +76,17 @@ export function SiteHeader() {
           held secondary by size, weight and tracking instead of by fading it
           into a photograph whose brightness we do not control.
         */}
-        <span className="hidden text-[11px] tracking-[0.14em] text-ink sm:inline">
+        {/*
+          Lifted 1.75px. The row is baseline-aligned, which is right for the
+          horizontal rhythm but means the descriptor's shorter caps centre
+          lower than the wordmark's: measured 1.75px below it, and below the
+          panel centre with it. The shift aligns the two cap-height centres
+          without breaking the shared baseline for the rest of the row.
+
+          A px value, not em: the descriptor is 11px at every width it is
+          visible at, and the wordmark it aligns to is 16px there.
+        */}
+        <span className="hidden -translate-y-[1.75px] text-[11px] tracking-[0.14em] text-ink sm:inline">
           The personal genomics company
         </span>
       </span>
