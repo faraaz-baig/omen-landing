@@ -48,7 +48,7 @@ export function HowItWorks() {
           How it works
         </p>
         <h2 className="mt-5 max-w-[20ch] text-[28px] leading-[1.15] tracking-[-0.02em] text-balance sm:text-[40px]">
-          Spit in a tube. That&rsquo;s the invasive part.
+          Spit in a tube.
         </h2>
         <p className="mt-5 max-w-[52ch] text-[17px] leading-8 text-ink-2 sm:text-[19px]">
           No needles, no clinic, no appointment. What comes back isn&rsquo;t
