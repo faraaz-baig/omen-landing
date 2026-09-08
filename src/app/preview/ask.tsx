@@ -1,9 +1,66 @@
 "use client";
 
-import { useEveAgent } from "eve/react";
+import { useEveAgent, type EveMessage } from "eve/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Markdown } from "@/components/chat/markdown";
 import { intro } from "./intro-state";
+
+/**
+ * What each tool reads as while it runs. Human activity, never the tool name:
+ * the stream carries `toolName` verbatim, and "get_pgx_profile" on screen
+ * would be the plumbing showing through.
+ */
+const TOOL_LABELS: Record<string, string> = {
+  get_pgx_profile: "Reading your medication genes",
+  get_my_genotypes: "Reading your DNA",
+  check_gene_callable: "Checking what your file covers",
+  check_variant_on_chip: "Checking what your file covers",
+  lookup_drug_guidance: "Checking prescribing guidance",
+  search_clinvar: "Searching clinical databases",
+  search_gwas: "Comparing population studies",
+  search_traits: "Researching this trait",
+  search_literature: "Reading the research",
+};
+
+/**
+ * Derive the status line from what the stream is actually doing, rather than
+ * a canned rotation. Measured on a real question: the model is reached ~300ms
+ * after send, but the first visible text lands ~15s later — everything in
+ * between is reasoning and tool calls that arrive as non-text parts. This
+ * walks back from the newest part of the assistant's streaming message:
+ * running tools name themselves (all of them, when a step fires several at
+ * once), reasoning reads as thinking, and once text is streaming the line
+ * disappears — the answer itself is the status. `null` means render nothing.
+ */
+function statusLine(messages: readonly EveMessage[]): string | null {
+  const last = messages[messages.length - 1];
+  if (!last || last.role !== "assistant") return "Working…";
+  for (let i = last.parts.length - 1; i >= 0; i--) {
+    const part = last.parts[i];
+    if (part.type === "text") {
+      return part.state === "streaming" ? null : "Working…";
+    }
+    if (part.type === "reasoning") return "Thinking…";
+    if (part.type === "dynamic-tool") {
+      // The whole trailing run of tool parts, not just the newest: a step
+      // often issues two calls together and both are genuinely in flight.
+      const labels: string[] = [];
+      for (let j = i; j >= 0; j--) {
+        const p = last.parts[j];
+        if (p.type !== "dynamic-tool") break;
+        if (p.state !== "input-streaming" && p.state !== "input-available") {
+          continue;
+        }
+        const label = TOOL_LABELS[p.toolName] ?? "Researching";
+        if (!labels.includes(label)) labels.unshift(label);
+      }
+      // Every call in the run has returned; the model is reading the results.
+      if (labels.length === 0) return "Thinking…";
+      return `${labels.join(" · ")}…`;
+    }
+  }
+  return "Working…";
+}
 
 /**
  * One surface at a time. The genome document (server-rendered, passed as
@@ -83,11 +140,22 @@ export function AskOmen({ children }: { children: ReactNode }) {
                 ),
               ),
             )}
-            {isBusy && (
-              <p className="mt-5 text-[10px] tracking-[0.16em] text-ink-2 uppercase">
-                Working…
-              </p>
-            )}
+            {isBusy &&
+              (() => {
+                const line = statusLine(messages);
+                if (line === null) return null;
+                return (
+                  // Keyed on the text: a phase change remounts the element and
+                  // replays the fade, so each new line announces itself
+                  // instead of the words silently swapping mid-glance.
+                  <p
+                    className="status-fade mt-5 text-[10px] tracking-[0.16em] text-ink-2 uppercase"
+                    key={line}
+                  >
+                    {line}
+                  </p>
+                );
+              })()}
             {agent.status === "error" && (
               <p className="mt-5 text-[12px] text-ember">
                 Something failed mid-answer. Ask again.
