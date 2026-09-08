@@ -69,10 +69,9 @@ export function Testing() {
             Genetic testing for your health.
           </h2>
           <p className="mt-5 max-w-[46ch] text-[17px] leading-8 text-ink-2 sm:text-[19px]">
-            Collect your saliva at home and post it back. No needles, no
-            clinic, no appointment. What comes back is how your body handles
-            specific medications, checked against the guidelines prescribers
-            use and written in plain English.
+            Submit your saliva sample from the comfort of your home. We
+            prepare your report and personalized guidance, so you can make
+            informed decisions about medication, supplementation and lifestyle.
           </p>
         </div>
 
