@@ -70,7 +70,7 @@ export function Testing() {
           </h2>
           <p className="mt-5 max-w-[46ch] text-[17px] leading-8 text-ink-2 sm:text-[19px]">
             Submit your saliva sample from the comfort of your home. We
-            prepare your report and personalized guidance, so you can make
+            provide a report and personalized guidance, so you can make
             informed decisions about medication, supplementation and lifestyle.
           </p>
         </div>
