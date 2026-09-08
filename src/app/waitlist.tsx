@@ -56,7 +56,7 @@ export function WaitlistCta() {
         onClick={open}
         type="button"
       >
-        Join the waitlist
+        Waitlist
       </button>
 
       <dialog
@@ -84,8 +84,7 @@ export function WaitlistCta() {
               You&rsquo;re on the list.
             </h2>
             <p className="mt-2 max-w-[38ch] text-[15px] leading-7 text-ink-2">
-              We&rsquo;ll be in touch when there&rsquo;s something worth your
-              time.
+              Look out for an email from us about your kit.
             </p>
             <button
               className="mt-7 w-full bg-ink py-3 text-[11px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85"
@@ -101,11 +100,11 @@ export function WaitlistCta() {
               className="text-[20px] leading-8 tracking-[-0.015em]"
               id="waitlist-heading"
             >
-              Join the waitlist
+              Waitlist
             </h2>
             <p className="mt-2 max-w-[38ch] text-[15px] leading-7 text-ink-2">
-              Know what works for your body. We&rsquo;ll let you know when it
-              opens up.
+              We&rsquo;ll follow up by email to arrange delivery of your DNA
+              kit.
             </p>
 
             {/* rule under the field rather than a box: closer to the type-led
