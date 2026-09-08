@@ -45,18 +45,28 @@ export function SiteHeader() {
         a 320px screen once the button is beside it.
       */}
       <span
-        className={`flex items-baseline gap-2.5 border px-4 py-2.5 leading-none uppercase transition-colors duration-300 ${panel}`}
+        // Asymmetric padding, deliberately. Centring the line box leaves the
+        // caps high, because the box reserves descender depth that uppercase
+        // type never uses. Measuring the inked cap height against the panel
+        // centre put it 0.6px high, so 0.6px moves from the bottom padding to
+        // the top: the ink centres and the panel height is unchanged.
+        className={`flex items-baseline gap-2.5 border px-4 pt-[10.6px] pb-[9.4px] leading-none uppercase transition-colors duration-300 ${panel}`}
       >
         <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
           Omen
         </span>
         {/* A middot at descriptor size all but vanishes between two runs of
-            tracked capitals. Set large enough to read as a deliberate
-            separator, and nudged onto the optical centre of the cap height —
-            baseline alignment would hang it low. */}
+            tracked capitals, so it is set much larger. leading-[0] collapses
+            its line box: at 24px it is otherwise taller than the type beside
+            it, and under items-baseline that surplus lands above the shared
+            baseline and pushes the whole lockup 3px below its panel centre.
+
+            No nudge. The glyph's ink runs from 7.08px to 4.44px above the
+            baseline, centring it 5.76px up, while OMEN's caps centre 5.88px
+            up — a 0.12px difference. It is already on the cap-height centre. */}
         <span
           aria-hidden
-          className="hidden translate-y-[0.06em] text-[24px] leading-none text-ink/45 sm:inline"
+          className="hidden text-[24px] leading-[0] text-ink/45 sm:inline"
         >
           ·
         </span>
