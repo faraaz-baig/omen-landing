@@ -23,12 +23,14 @@ function FormFields({ error }: { error: string | null }) {
 
   return (
     <>
-      {/* rule under the field rather than a box: closer to the type-led
-          treatment on the rest of the page than a bordered input */}
+      {/* enclosed, not underlined: once the banner, buttons and dialog took
+          hairline borders and the shared --radius-frame, a bare rule read as
+          a holdover. Transparent bg and a border that darkens to full ink on
+          focus keep it as quiet as the underline was. */}
       <input
         aria-label="Email address"
         autoComplete="email"
-        className="mt-7 w-full border-b border-ink/20 bg-transparent pb-3 text-[17px] leading-7 outline-none transition-colors placeholder:text-ink-2/50 focus:border-ink"
+        className="mt-7 w-full rounded-[var(--radius-frame)] border border-ink/20 bg-transparent px-4 py-3.5 text-[17px] leading-7 outline-none transition-colors placeholder:text-ink-2/50 focus:border-ink"
         disabled={pending}
         name="email"
         placeholder="you@example.com"
@@ -36,14 +38,22 @@ function FormFields({ error }: { error: string | null }) {
         type="email"
       />
 
-      <p aria-live="polite" className="min-h-[1.25rem]">
+      {/* the error line's full height is reserved (min-h matches its one line
+          of 13px type) so the button does not jump when a message appears.
+          The margins around the slot are minimal because the slot itself is
+          already 20px of separation between two boxed elements — with the
+          old underline field this whole run was 36px and read as the button
+          drifting away from the form. */}
+      <p aria-live="polite" className="mt-0.5 min-h-[1.25rem]">
         {error && (
-          <span className="mt-2 block text-[13px] text-ember">{error}</span>
+          <span className="block text-[13px] leading-[1.25rem] text-ember">
+            {error}
+          </span>
         )}
       </p>
 
       <button
-        className="mt-4 w-full bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 disabled:opacity-40"
+        className="mt-0.5 w-full rounded-[var(--radius-frame)] bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 disabled:opacity-40"
         disabled={pending}
         type="submit"
       >
@@ -52,8 +62,6 @@ function FormFields({ error }: { error: string | null }) {
     </>
   );
 }
-
-type State = "idle" | "done";
 
 const WaitlistContext = createContext<(() => void) | null>(null);
 
@@ -77,14 +85,29 @@ export function useWaitlist() {
  */
 export function WaitlistProvider({ children }: { children: ReactNode }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [state, setState] = useState<State>("idle");
   const [error, setError] = useState<string | null>(null);
+  // Success shows as a toast, not a dialog state: the confirmation needs no
+  // decision from the user, so it should not hold the page hostage behind a
+  // modal that has to be dismissed.
+  const [toast, setToast] = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const open = () => {
-    setState("idle");
     setError(null);
     dialogRef.current?.showModal();
   };
+
+  const showToast = () => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast(true);
+    toastTimer.current = setTimeout(() => setToast(false), 5000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
 
   // Clicking the backdrop closes. The dialog element itself fills the top
   // layer, so a click landing on <dialog> rather than its child panel is a
@@ -103,7 +126,8 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
     setError(null);
     const result = await joinWaitlist(String(formData.get("email") ?? ""));
     if (result.ok) {
-      setState("done");
+      dialogRef.current?.close();
+      showToast();
     } else {
       setError(result.message);
     }
@@ -114,10 +138,10 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
       {children}
 
       <dialog
-        aria-label={state === "done" ? "Request received" : "Request a kit"}
+        aria-label="Request a kit"
         // text-left: a trigger may sit inside the hero's centred text block and
         // the dialog would otherwise inherit that centring.
-        className="waitlist-dialog w-[min(30rem,calc(100vw-2rem))] bg-paper p-8 text-left text-ink sm:p-10"
+        className="waitlist-dialog w-[min(30rem,calc(100vw-2rem))] rounded-[var(--radius-frame)] bg-paper p-8 text-left text-ink sm:p-10"
         ref={dialogRef}
       >
         <button
@@ -129,47 +153,42 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
           ×
         </button>
 
-        {state === "done" ? (
-          <div aria-live="polite">
-            {/* No heading, mirroring the form state. With one line carrying the
-                whole confirmation it takes the full ink colour rather than the
-                muted tone used for supporting copy. */}
-            <p className="max-w-[38ch] text-[17px] leading-8 text-ink">
-              Look out for an email from us about your kit.
-            </p>
-            <button
-              className="mt-7 w-full bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85"
-              onClick={() => dialogRef.current?.close()}
-              type="button"
-            >
-              Close
-            </button>
-          </div>
-        ) : (
-          <form action={submit}>
-            <p className="max-w-[38ch] text-[17px] leading-8 text-ink-2">
-              We&rsquo;ll follow up by email to arrange delivery of your DNA
-              kit.
-            </p>
+        <form action={submit}>
+          <p className="max-w-[38ch] text-[17px] leading-8 text-ink-2">
+            We&rsquo;ll follow up by email to arrange delivery of your DNA kit.
+          </p>
 
-            <FormFields error={error} />
-          </form>
-        )}
+          <FormFields error={error} />
+        </form>
       </dialog>
+
+      {/* The live region stays mounted with the message swapping inside it —
+          inserting role="status" and its text together in one commit is the
+          case screen readers most often miss. */}
+      <div
+        aria-live="polite"
+        className="pointer-events-none fixed inset-x-0 bottom-6 z-30 flex justify-center px-4"
+        role="status"
+      >
+        {toast && (
+          <p className="toast-in pointer-events-auto rounded-[var(--radius-frame)] border border-ink/12 bg-paper px-5 py-4 text-[15px] leading-6 text-ink shadow-[0_16px_48px_-16px_rgb(0_0_0/0.3)]">
+            Look out for an email from us about your kit.
+          </p>
+        )}
+      </div>
     </WaitlistContext.Provider>
   );
 }
 
-/** The hero's underlined link-style trigger. */
+/** The hero's trigger: a solid white button, the one filled CTA on the page.
+ *  The header's hairline "Get a kit" stays the quiet sibling — same family,
+ *  different volume, so only one element in the frame is loud. */
 export function WaitlistCta() {
   const open = useWaitlist();
 
   return (
-    // uppercase needs tracking to breathe, and the trailing letter-space
-    // pushes the underline past the final glyph, so the negative margin
-    // cancels it and keeps the rule flush and centred.
     <button
-      className="mt-7 -mr-[0.14em] inline-block border-b border-white/70 pb-[5px] text-[13px] leading-none font-medium tracking-[0.14em] text-white uppercase transition-colors hover:border-white sm:text-[14px]"
+      className="mt-7 inline-block rounded-[var(--radius-frame)] bg-paper px-7 py-3.5 text-[12px] leading-none font-medium tracking-[0.16em] text-ink uppercase transition-opacity hover:opacity-90 sm:text-[13px]"
       onClick={open}
       type="button"
     >

@@ -168,6 +168,31 @@ body {
   animation: backdrop-in 0.28s ease forwards;
 }
 
+/* Success toast: same paper/hairline/shadow language as the dialog, entering
+   with the dialog's easing but from below, the direction a toast arrives
+   from. Exit is a plain unmount — a departure animation would need a second
+   timer and a leaving state for a panel nobody is looking at by then. */
+.toast-in {
+  animation: toast-in 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-in {
+    animation: none;
+  }
+}
+
 @keyframes dialog-in {
   from {
     opacity: 0;
@@ -316,4 +341,16 @@ body {
   --input: #e7e6e4;
   --ring: var(--ink);
   --radius: 0px;
+  /* The one radius the site uses: the hero frame and the boxed buttons share
+     it via rounded-[var(--radius-frame)], so they can never drift apart. The
+     shadcn --radius-* tokens above stay zeroed for the chat UI. */
+  --radius-frame: 4px;
+}
+
+/* 40rem = Tailwind's sm breakpoint; keep in step with the sm: utilities on
+   the elements that use the variable. */
+@media (min-width: 40rem) {
+  :root {
+    --radius-frame: 6px;
+  }
 }

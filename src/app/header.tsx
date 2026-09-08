@@ -1,45 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useWaitlist } from "./waitlist";
 
 /**
- * Floating header over the hero. Bare type at the top of the page, where the
- * photograph is clean behind it; panels fade in once the page scrolls and
- * content starts passing underneath.
+ * In-flow header above the hero frame, on paper. It used to float fixed over
+ * the photograph with a scroll-triggered frosted panel; both went away when
+ * the hero became an inset box with the header sitting above it — there is
+ * nothing behind the header to frost any more, and it scrolls with the page.
  *
- * Padding and a transparent border are present in both states, so only colour
- * animates. Adding the border and padding on scroll instead would resize both
- * elements and jog the header sideways at the moment it appears.
- *
- * The wordmark is ink rather than white: sampling the hero behind the header
- * gives luminance 182 on the left and 248 on the right, so there is nothing
- * for white type to sit against on either side.
+ * Horizontal padding matches the hero frame's gutter (px-3 / sm:px-5) so the
+ * wordmark and button align with the box edges below, and the vertical
+ * padding repeats the same values so the header band reads as part of the
+ * same frame.
  */
 export function SiteHeader() {
   const open = useWaitlist();
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    // Passive: this must never block the scroll it is listening to. React
-    // bails out when the boolean is unchanged, so this re-renders twice per
-    // page, not once per frame.
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Blur only, no white fill: the panel frosts whatever is passing beneath it
-  // rather than covering it. Over the hero that reads as glass; once the page
-  // reaches the white section there is nothing to frost and it disappears,
-  // which is the right behaviour — the ink type needs no help on paper.
-  const panel = scrolled
-    ? "border-ink/10 bg-transparent backdrop-blur-lg"
-    : "border-transparent bg-transparent";
 
   return (
-    <header className="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-4 p-4 sm:p-6">
+    <header className="flex items-center justify-between gap-4 px-3 py-3 sm:px-5 sm:py-5">
       {/*
         A lockup, not one string. The descriptor is set smaller, lighter and on
         tighter tracking so "Omen" still reads as the mark rather than the two
@@ -49,16 +27,11 @@ export function SiteHeader() {
         a 320px screen once the button is beside it.
       */}
       <span
-        // Asymmetric padding, deliberately. Centring the line box leaves the
-        // caps high, because the box reserves descender depth that uppercase
-        // type never uses. Measuring the inked cap height against the panel
-        // centre put it 0.6px high, so 0.6px sits in the top padding rather
-        // than the bottom: the ink centres, the height is unchanged.
-        //
-        // Height here is font-size + 22px (20 padding, 2 border): 37px on a
-        // phone at 15px type, 38px from sm at 16px. The button is pinned to
-        // those two numbers.
-        className={`flex items-baseline gap-2.5 border px-4 pt-[10.6px] pb-[9.4px] leading-none uppercase transition-colors duration-300 ${panel}`}
+        // No panel padding or ghost border: those were sized for the frosted
+        // panel this used to sit in over the photo. Bare type on paper needs
+        // neither, and the wordmark now starts flush at the header's gutter,
+        // aligned with the banner edge below it.
+        className="flex items-baseline gap-2.5 leading-none uppercase"
       >
         <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
           Omen
@@ -79,12 +52,6 @@ export function SiteHeader() {
           ·
         </span>
         {/*
-          Full ink, not ink-2. Over this hero ink-2 measures 3.15:1, under the
-          4.5:1 small text needs, and it visibly washed out. The descriptor is
-          held secondary by size, weight and tracking instead of by fading it
-          into a photograph whose brightness we do not control.
-        */}
-        {/*
           Lifted 1.75px. The row is baseline-aligned, which is right for the
           horizontal rhythm but means the descriptor's shorter caps centre
           lower than the wordmark's: measured 1.75px below it, and below the
@@ -100,14 +67,13 @@ export function SiteHeader() {
       </span>
 
       <button
-        // Height pinned to the lockup's, which is padding-driven and so
-        // changes with its font size. Below the 44px comfortable tap target,
-        // accepted here to keep the two panels the same height.
-        className={`inline-flex h-[37px] items-center border px-5 sm:h-[38px] text-[12px] leading-none font-medium tracking-[0.16em] uppercase transition-colors duration-300 sm:px-6 sm:text-[13px] ${
-          scrolled
-            ? "border-ink/15 bg-ink/90 text-paper backdrop-blur-md hover:bg-ink"
-            : "border-transparent bg-transparent text-ink hover:text-ink-2"
-        }`}
+        // Below the 44px comfortable tap target, accepted for how light this
+        // header runs; the bare lockup no longer dictates a height to match.
+        //
+        // Hairline border, ink on hover: on paper the button no longer has a
+        // photograph to sit against, so it takes the site's bordered-panel
+        // treatment instead of the transparent-then-frosted overlay states.
+        className="inline-flex h-[37px] items-center rounded-[var(--radius-frame)] border border-ink/15 bg-transparent px-5 text-[12px] leading-none font-medium tracking-[0.16em] text-ink uppercase transition-colors duration-300 hover:bg-ink hover:text-paper sm:h-[38px] sm:px-6 sm:text-[13px]"
         onClick={open}
         type="button"
       >
