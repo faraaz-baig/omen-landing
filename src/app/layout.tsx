@@ -11,7 +11,7 @@ const display = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "heyomen.com",
+  title: "DNA Testing for Health - OMEN",
 };
 
 /* viewportFit: "cover" is what makes env(safe-area-inset-*) resolve to a real

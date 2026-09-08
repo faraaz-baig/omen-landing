@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { OmenMark } from "./omen-mark";
 import { useWaitlist } from "./waitlist";
 
 /**
  * Two headers, one component. At the top of the page: a three-zone in-flow
- * band — nav left, the wordmark lockup dead-center (absolutely positioned so
+ * band — nav left, the logo lockup dead-center (absolutely positioned so
  * uneven zones can never shift it), actions right. Once that band scrolls
  * away, a condensed capsule fixes itself to the top edge: frosted espresso,
  * rounded bottom corners only (it hangs from the viewport, so its top edge
@@ -32,9 +33,7 @@ export function SiteHeader() {
   return (
     <>
       <header className="relative flex h-14 items-center justify-between px-4 sm:h-[92px] sm:px-5">
-        <span className="text-[15px] leading-none font-medium tracking-[0.22em] text-ink uppercase sm:hidden">
-          Omen
-        </span>
+        <OmenMark className="h-5 w-auto text-ink sm:hidden" />
 
         <nav className="hidden items-center gap-9 sm:flex">
           <a
@@ -46,9 +45,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="pointer-events-none absolute inset-0 hidden flex-col items-center justify-center gap-1.5 sm:flex">
-          <span className="text-[18px] leading-none font-medium tracking-[0.22em] text-ink uppercase">
-            Omen
-          </span>
+          <OmenMark className="h-6 w-auto text-ink" />
           <span className="text-[10px] leading-none tracking-[0.18em] text-ink-2 uppercase">
             The personal genomics company
           </span>
@@ -89,9 +86,7 @@ export function SiteHeader() {
           >
             How it works
           </a>
-          <span className="text-[14px] leading-none font-medium tracking-[0.22em] text-white uppercase sm:text-[15px]">
-            Omen
-          </span>
+          <OmenMark className="h-5 w-auto text-white" />
           <Link
             className="hidden text-[11px] font-medium tracking-[0.16em] text-white/90 uppercase transition-colors hover:text-white sm:inline"
             href="/gate"
