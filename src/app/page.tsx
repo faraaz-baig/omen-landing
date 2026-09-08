@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SiteHeader } from "./header";
+import { HowItWorks } from "./how-it-works";
 import { WaitlistCta, WaitlistProvider } from "./waitlist";
 
 export default function Home() {
@@ -61,6 +62,8 @@ export default function Home() {
             <WaitlistCta />
           </div>
         </section>
+
+        <HowItWorks />
       </main>
     </WaitlistProvider>
   );
