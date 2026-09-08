@@ -60,7 +60,7 @@ export function WaitlistCta() {
       </button>
 
       <dialog
-        aria-labelledby="waitlist-heading"
+        aria-label={state === "done" ? "Request received" : "Request a kit"}
         // text-left: the trigger sits inside the hero's centred text block and
         // the dialog would otherwise inherit that centring.
         className="waitlist-dialog w-[min(30rem,calc(100vw-2rem))] bg-paper p-8 text-left text-ink sm:p-10"
@@ -77,10 +77,7 @@ export function WaitlistCta() {
 
         {state === "done" ? (
           <div aria-live="polite">
-            <h2
-              className="text-[20px] leading-8 tracking-[-0.015em]"
-              id="waitlist-heading"
-            >
+            <h2 className="text-[20px] leading-8 tracking-[-0.015em]">
               You&rsquo;re on the list.
             </h2>
             <p className="mt-2 max-w-[38ch] text-[15px] leading-7 text-ink-2">
@@ -96,13 +93,7 @@ export function WaitlistCta() {
           </div>
         ) : (
           <form action={submit}>
-            <h2
-              className="text-[20px] leading-8 tracking-[-0.015em]"
-              id="waitlist-heading"
-            >
-              Request a test kit
-            </h2>
-            <p className="mt-2 max-w-[38ch] text-[15px] leading-7 text-ink-2">
+            <p className="max-w-[38ch] text-[15px] leading-7 text-ink-2">
               We&rsquo;ll follow up by email to arrange delivery of your DNA
               kit.
             </p>
@@ -133,7 +124,7 @@ export function WaitlistCta() {
               disabled={state === "sending"}
               type="submit"
             >
-              {state === "sending" ? "…" : "Send"}
+              {state === "sending" ? "…" : "Request a kit"}
             </button>
           </form>
         )}
