@@ -77,10 +77,10 @@ export function WaitlistCta() {
 
         {state === "done" ? (
           <div aria-live="polite">
-            <h2 className="text-[20px] leading-8 tracking-[-0.015em]">
-              You&rsquo;re on the list.
-            </h2>
-            <p className="mt-2 max-w-[38ch] text-[15px] leading-7 text-ink-2">
+            {/* No heading, mirroring the form state. With one line carrying the
+                whole confirmation it takes the full ink colour rather than the
+                muted tone used for supporting copy. */}
+            <p className="max-w-[38ch] text-[15px] leading-7 text-ink">
               Look out for an email from us about your kit.
             </p>
             <button
