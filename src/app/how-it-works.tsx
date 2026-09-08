@@ -18,11 +18,26 @@ import Image from "next/image";
 type Sample = { src: string | null; alt: string };
 
 const SAMPLES: Sample[] = [
-  { src: null, alt: "A woman filling a saliva collection tube in a bright studio" },
-  { src: null, alt: "A man filling a saliva collection tube in a bright studio" },
-  { src: null, alt: "A young woman filling a saliva collection tube in a bright studio" },
-  { src: null, alt: "A man capping a filled saliva collection tube in a bright studio" },
-  { src: null, alt: "A woman holding a capped saliva collection tube in a bright studio" },
+  {
+    src: null,
+    alt: "A woman holding a saliva collection tube to her lower lip, eyes cast down",
+  },
+  {
+    src: null,
+    alt: "A man leaning slightly forward, holding a saliva collection tube to his lips",
+  },
+  {
+    src: null,
+    alt: "A woman screwing the cap onto a filled saliva collection tube",
+  },
+  {
+    src: null,
+    alt: "A man holding a saliva collection tube to his lips, shoulders relaxed",
+  },
+  {
+    src: null,
+    alt: "A woman turning a capped saliva collection tube over in her fingers",
+  },
 ];
 
 export function HowItWorks() {
