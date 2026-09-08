@@ -1,37 +1,77 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useWaitlist } from "./waitlist";
 
 /**
- * Floating header over the hero. Not a bar: only the button carries a panel,
- * so the photograph runs uninterrupted edge to edge.
+ * Floating header over the hero. Bare type at the top of the page, where the
+ * photograph is clean behind it; panels fade in once the page scrolls and
+ * content starts passing underneath.
  *
- * Both colour choices are driven by the frame, not preference. Sampling the
- * hero behind the header gives luminance 182 on the left and 248 on the right
- * — a bright wall on one side and near-white on the other. So:
+ * Padding and a transparent border are present in both states, so only colour
+ * animates. Adding the border and padding on scroll instead would resize both
+ * elements and jog the header sideways at the moment it appears.
  *
- *   - The wordmark is ink, not white. White type at 182 has nothing to sit
- *     against, and it needs no panel at all once it is dark.
- *   - The button is a dark translucent chip, not a white one. A white veil
- *     over a 248 wall is invisible, which is what made the first pass read as
- *     faint. Dark also separates the button from the wordmark, so the one
- *     clickable thing up here looks clickable.
- *
- * Square corners, matching the zero-radius treatment across the site.
+ * The wordmark is ink rather than white: sampling the hero behind the header
+ * gives luminance 182 on the left and 248 on the right, so there is nothing
+ * for white type to sit against on either side.
  */
 export function SiteHeader() {
   const open = useWaitlist();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    // Passive: this must never block the scroll it is listening to. React
+    // bails out when the boolean is unchanged, so this re-renders twice per
+    // page, not once per frame.
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const panel = scrolled
+    ? "border-ink/10 bg-paper/70 backdrop-blur-md"
+    : "border-transparent bg-transparent";
 
   return (
     <header className="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-4 p-4 sm:p-6">
-      <span className="text-[15px] leading-none font-medium tracking-[0.22em] text-ink uppercase sm:text-[16px]">
-        Omen
+      {/*
+        A lockup, not one string. The descriptor is set smaller, lighter and on
+        tighter tracking so "Omen" still reads as the mark rather than the two
+        becoming one long line of evenly spaced capitals.
+
+        It is hidden below sm: at 0.22em tracking the full lockup is wider than
+        a 320px screen once the button is beside it.
+      */}
+      <span
+        className={`flex items-baseline gap-2.5 border px-4 py-2.5 leading-none uppercase transition-colors duration-300 ${panel}`}
+      >
+        <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
+          Omen
+        </span>
+        <span aria-hidden className="hidden text-[11px] text-ink/40 sm:inline">
+          ·
+        </span>
+        {/*
+          Full ink, not ink-2. Over this hero ink-2 measures 3.15:1, under the
+          4.5:1 small text needs, and it visibly washed out. The descriptor is
+          held secondary by size, weight and tracking instead of by fading it
+          into a photograph whose brightness we do not control.
+        */}
+        <span className="hidden text-[11px] tracking-[0.14em] text-ink sm:inline">
+          The personal genomics company
+        </span>
       </span>
 
       <button
         // min-h-11: padding alone left this at 38px, under the 44px minimum
         // comfortable tap target on a phone.
-        className="inline-flex min-h-11 items-center border border-ink/15 bg-ink/85 px-5 text-[12px] leading-none font-medium tracking-[0.16em] text-paper uppercase backdrop-blur-md transition-colors duration-200 hover:bg-ink sm:px-6 sm:text-[13px]"
+        className={`inline-flex min-h-11 items-center border px-5 text-[12px] leading-none font-medium tracking-[0.16em] uppercase transition-colors duration-300 sm:px-6 sm:text-[13px] ${
+          scrolled
+            ? "border-ink/15 bg-ink/90 text-paper backdrop-blur-md hover:bg-ink"
+            : "border-transparent bg-transparent text-ink hover:text-ink-2"
+        }`}
         onClick={open}
         type="button"
       >
