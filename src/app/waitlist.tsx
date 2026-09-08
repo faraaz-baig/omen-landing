@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { useFormStatus } from "react-dom";
 import { joinWaitlist } from "./actions/waitlist";
 
@@ -40,7 +47,7 @@ function FormFields({ error }: { error: string | null }) {
         disabled={pending}
         type="submit"
       >
-        {pending ? "Loading\u2026" : "Request a kit"}
+        {pending ? "Loading…" : "Request a kit"}
       </button>
     </>
   );
@@ -48,12 +55,27 @@ function FormFields({ error }: { error: string | null }) {
 
 type State = "idle" | "done";
 
+const WaitlistContext = createContext<(() => void) | null>(null);
+
+/** Opens the one dialog on the page. Throws outside the provider rather than
+ *  handing back a no-op that fails silently when a trigger is misplaced. */
+export function useWaitlist() {
+  const open = useContext(WaitlistContext);
+  if (!open) throw new Error("useWaitlist must be used inside <WaitlistProvider>");
+  return open;
+}
+
 /**
- * Trigger + modal. Native <dialog> rather than a div: showModal() gives focus
- * trapping, Esc-to-close, inert background content, and top-layer stacking
- * from the platform, none of which is worth reimplementing.
+ * Owns the single <dialog> for the page and exposes its opener through
+ * context, so the header button and the hero link drive the same instance.
+ * Rendering a dialog per trigger would duplicate the form, its state and its
+ * id, and let two copies disagree about whether you already signed up.
+ *
+ * Native <dialog> rather than a div: showModal() gives focus trapping,
+ * Esc-to-close, inert background content, and top-layer stacking from the
+ * platform, none of which is worth reimplementing.
  */
-export function WaitlistCta() {
+export function WaitlistProvider({ children }: { children: ReactNode }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [state, setState] = useState<State>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -88,21 +110,12 @@ export function WaitlistCta() {
   };
 
   return (
-    <>
-      {/* uppercase needs tracking to breathe, and the trailing letter-space
-          pushes the underline past the final glyph, so the negative margin
-          cancels it and keeps the rule flush and centred. */}
-      <button
-        className="mt-7 -mr-[0.14em] inline-block border-b border-white/70 pb-[5px] text-[13px] leading-none font-medium tracking-[0.14em] text-white uppercase transition-colors hover:border-white sm:text-[14px]"
-        onClick={open}
-        type="button"
-      >
-        Request a test kit
-      </button>
+    <WaitlistContext.Provider value={open}>
+      {children}
 
       <dialog
         aria-label={state === "done" ? "Request received" : "Request a kit"}
-        // text-left: the trigger sits inside the hero's centred text block and
+        // text-left: a trigger may sit inside the hero's centred text block and
         // the dialog would otherwise inherit that centring.
         className="waitlist-dialog w-[min(30rem,calc(100vw-2rem))] bg-paper p-8 text-left text-ink sm:p-10"
         ref={dialogRef}
@@ -143,6 +156,24 @@ export function WaitlistCta() {
           </form>
         )}
       </dialog>
-    </>
+    </WaitlistContext.Provider>
+  );
+}
+
+/** The hero's underlined link-style trigger. */
+export function WaitlistCta() {
+  const open = useWaitlist();
+
+  return (
+    // uppercase needs tracking to breathe, and the trailing letter-space
+    // pushes the underline past the final glyph, so the negative margin
+    // cancels it and keeps the rule flush and centred.
+    <button
+      className="mt-7 -mr-[0.14em] inline-block border-b border-white/70 pb-[5px] text-[13px] leading-none font-medium tracking-[0.14em] text-white uppercase transition-colors hover:border-white sm:text-[14px]"
+      onClick={open}
+      type="button"
+    >
+      Request a test kit
+    </button>
   );
 }
