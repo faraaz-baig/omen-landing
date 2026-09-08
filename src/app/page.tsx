@@ -47,7 +47,7 @@ export default function Home() {
             for your body.
           </h1>
 
-          <p className="mx-auto mt-[34px] max-w-[46ch] text-[15px] leading-6 font-normal text-balance text-white/85 sm:text-base">
+          <p className="mx-auto mt-[34px] max-w-[46ch] text-[17px] leading-7 font-normal text-balance text-white/85 sm:text-[19px] sm:leading-8">
             We explain your DNA in plain English, so you can make informed
             choices about your diet, medication and treatment.
           </p>

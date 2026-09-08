@@ -61,7 +61,11 @@ body {
    measured size. Leading and tracking are opened off CK's values — 1.0/−0.046
    is very tight, and at two stacked lines it wants air. */
 .display {
-  font-size: clamp(2.125rem, 4.8vw, 4.32rem);
+  /* Floor raised from 2.125rem: at 390px the vw term resolves to ~19px, so
+     phones sat on the minimum and the headline read small next to the photo.
+     The 4.32rem cap is CK's measured 69.12px at 1440 and is nudged only
+     slightly, since that match is the point of the treatment. */
+  font-size: clamp(2.5rem, 5vw, 4.6rem);
   font-weight: 300;
   line-height: 1.14;
   letter-spacing: -0.022em;

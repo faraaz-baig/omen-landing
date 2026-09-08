@@ -52,7 +52,7 @@ export function WaitlistCta() {
           pushes the underline past the final glyph, so the negative margin
           cancels it and keeps the rule flush and centred. */}
       <button
-        className="mt-7 -mr-[0.14em] inline-block border-b border-white/70 pb-[5px] text-[12px] leading-none font-medium tracking-[0.14em] text-white uppercase transition-colors hover:border-white sm:text-[13px]"
+        className="mt-7 -mr-[0.14em] inline-block border-b border-white/70 pb-[5px] text-[13px] leading-none font-medium tracking-[0.14em] text-white uppercase transition-colors hover:border-white sm:text-[14px]"
         onClick={open}
         type="button"
       >
@@ -80,11 +80,11 @@ export function WaitlistCta() {
             {/* No heading, mirroring the form state. With one line carrying the
                 whole confirmation it takes the full ink colour rather than the
                 muted tone used for supporting copy. */}
-            <p className="max-w-[38ch] text-[15px] leading-7 text-ink">
+            <p className="max-w-[38ch] text-[17px] leading-8 text-ink">
               Look out for an email from us about your kit.
             </p>
             <button
-              className="mt-7 w-full bg-ink py-3 text-[11px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85"
+              className="mt-7 w-full bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85"
               onClick={() => dialogRef.current?.close()}
               type="button"
             >
@@ -93,7 +93,7 @@ export function WaitlistCta() {
           </div>
         ) : (
           <form action={submit}>
-            <p className="max-w-[38ch] text-[15px] leading-7 text-ink-2">
+            <p className="max-w-[38ch] text-[17px] leading-8 text-ink-2">
               We&rsquo;ll follow up by email to arrange delivery of your DNA
               kit.
             </p>
@@ -103,7 +103,7 @@ export function WaitlistCta() {
             <input
               aria-label="Email address"
               autoComplete="email"
-              className="mt-7 w-full border-b border-ink/20 bg-transparent pb-2.5 text-[16px] leading-6 outline-none transition-colors placeholder:text-ink-2/50 focus:border-ink"
+              className="mt-7 w-full border-b border-ink/20 bg-transparent pb-3 text-[17px] leading-7 outline-none transition-colors placeholder:text-ink-2/50 focus:border-ink"
               disabled={state === "sending"}
               name="email"
               placeholder="you@example.com"
@@ -120,7 +120,7 @@ export function WaitlistCta() {
             </p>
 
             <button
-              className="mt-4 w-full bg-ink py-3 text-[11px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 disabled:opacity-40"
+              className="mt-4 w-full bg-ink py-3.5 text-[12px] font-medium tracking-[0.16em] text-paper uppercase transition-opacity hover:opacity-85 disabled:opacity-40"
               disabled={state === "sending"}
               type="submit"
             >
