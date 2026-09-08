@@ -49,12 +49,16 @@ export function SiteHeader() {
         a 320px screen once the button is beside it.
       */}
       <span
-        // Asymmetric padding, deliberately. Centring the line box leaves the
-        // caps high, because the box reserves descender depth that uppercase
-        // type never uses. Measuring the inked cap height against the panel
-        // centre put it 0.6px high, so 0.6px moves from the bottom padding to
-        // the top: the ink centres and the panel height is unchanged.
-        className={`flex items-baseline gap-2.5 border px-4 pt-[10.6px] pb-[9.4px] leading-none uppercase transition-colors duration-300 ${panel}`}
+        // Padding, not min-height, to match the button's 44px. min-h with a
+        // baseline-aligned flex row leaves the content sitting at the top of
+        // the taller box rather than centred in it.
+        //
+        // The 1.2px asymmetry is deliberate and must survive any height
+        // change. Centring the line box leaves the caps high, because the box
+        // reserves descender depth that uppercase type never uses; measuring
+        // the inked cap height against the panel centre put it 0.6px high, so
+        // 0.6px sits in the top padding rather than the bottom.
+        className={`flex items-baseline gap-2.5 border px-4 pt-[13.6px] pb-[12.4px] leading-none uppercase transition-colors duration-300 ${panel}`}
       >
         <span className="text-[15px] font-medium tracking-[0.22em] text-ink sm:text-[16px]">
           Omen
