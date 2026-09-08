@@ -56,7 +56,7 @@ export function WaitlistCta() {
         onClick={open}
         type="button"
       >
-        Waitlist
+        Request a test kit
       </button>
 
       <dialog
