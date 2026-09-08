@@ -19,7 +19,7 @@ type Sample = { src: string | null; alt: string };
 
 const SAMPLES: Sample[] = [
   {
-    src: null,
+    src: "/samples/east-asian.jpg",
     alt: "A woman holding a saliva collection tube to her lower lip, eyes cast down",
   },
   {
