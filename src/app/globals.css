@@ -174,22 +174,31 @@ body {
 }
 
 /* Section-by-section scrolling: a short gesture settles the next section into
-   place rather than leaving the page stranded between two. Every width — the
-   image tiles are sized off viewport height precisely so no section outgrows
-   the screen — but only down to a point: the copy does not shrink with the
-   window, so on a short viewport the section outgrows it anyway (804px inside
-   640px at 320x640). Below 700px tall the page scrolls normally rather than
-   snapping to a section whose bottom cannot be reached. Skipped under
-   reduced-motion, where hijacking the scroll is exactly the wrong move. */
-@media (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+   place rather than leaving the page stranded between two. The threshold is
+   500px, not the 700px it once was: media queries measure the layout viewport,
+   which on a phone includes the address bar, so an 844pt iPhone reports ~660px
+   and a 700px floor silently switched snapping off on every real phone. A
+   section slightly taller than a short viewport is fine — a snap area larger
+   than the snapport scrolls freely within itself — so the guard only needs to
+   exclude genuinely cramped viewports (landscape phones), where hijacking the
+   scroll fights the reader. Skipped under reduced-motion for the same reason. */
+@media (min-height: 500px) and (prefers-reduced-motion: no-preference) {
   html {
     scroll-snap-type: y mandatory;
   }
 
-  /* The footer is deliberately not a snap point: it is a short band, and
-     snapping it to the top of the screen would leave the page mostly empty. */
   main > section {
     scroll-snap-align: start;
+  }
+
+  /* End-aligned, not start: snapping this short band to the top of the screen
+     would leave the page mostly empty. But it must be *some* snap position —
+     with none, mandatory snapping treats the bottom of the page as an illegal
+     resting place and throws the scroll back to the last section, leaving the
+     footer unreachable (measured: scroll to 887 settles at 677). Aligning its
+     end pins the footer to the bottom edge with the section filling the rest. */
+  footer {
+    scroll-snap-align: end;
   }
 }
 

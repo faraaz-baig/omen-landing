@@ -38,11 +38,11 @@ const SAMPLES: Sample[] = [
 
 export function Testing() {
   return (
-    // lg:py-0 so the image block runs edge to edge vertically: hard against
-    // the bottom of the hero and hard into the top of the footer. The padding
-    // stays below lg, where the layout stacks and the headline would otherwise
-    // butt straight into the photograph above it.
-    <section className="py-16 sm:py-20 lg:py-0">
+    // Top padding only below lg, where the layout stacks and the headline
+    // would otherwise butt straight into the photograph above it. No bottom
+    // padding at any width: the image block ends the section, and it runs
+    // hard into the footer just as it does on desktop.
+    <section className="pt-16 sm:pt-20 lg:pt-0">
       {/*
         No max-width and no gutter on the grid itself, so the image block can
         run to the right edge of the screen. The left column carries the page
