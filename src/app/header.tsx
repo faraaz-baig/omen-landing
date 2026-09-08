@@ -30,8 +30,12 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Blur only, no white fill: the panel frosts whatever is passing beneath it
+  // rather than covering it. Over the hero that reads as glass; once the page
+  // reaches the white section there is nothing to frost and it disappears,
+  // which is the right behaviour — the ink type needs no help on paper.
   const panel = scrolled
-    ? "border-ink/10 bg-paper/70 backdrop-blur-md"
+    ? "border-ink/10 bg-transparent backdrop-blur-lg"
     : "border-transparent bg-transparent";
 
   return (
