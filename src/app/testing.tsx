@@ -69,10 +69,10 @@ export function Testing() {
             Genetic testing for your health.
           </h2>
           <p className="mt-5 max-w-[46ch] text-[17px] leading-8 text-ink-2 sm:text-[19px]">
-            No needles, no clinic, no appointment. What comes back isn&rsquo;t
-            ancestry trivia. It&rsquo;s how your body handles the medication you
-            actually get prescribed, read against clinical prescribing
-            guidelines and explained in plain English.
+            Collect your saliva at home and post it back. No needles, no
+            clinic, no appointment. What comes back is how your body handles
+            specific medications, checked against the guidelines prescribers
+            use and written in plain English.
           </p>
         </div>
 
