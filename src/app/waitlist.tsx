@@ -133,7 +133,7 @@ export function WaitlistCta() {
               disabled={state === "sending"}
               type="submit"
             >
-              {state === "sending" ? "…" : "Request"}
+              {state === "sending" ? "…" : "Send"}
             </button>
           </form>
         )}
