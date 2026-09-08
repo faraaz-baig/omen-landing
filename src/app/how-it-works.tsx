@@ -31,7 +31,7 @@ const SAMPLES: Sample[] = [
     alt: "A woman screwing the cap onto a filled saliva collection tube",
   },
   {
-    src: null,
+    src: "/samples/white-man.jpg",
     alt: "A man holding a saliva collection tube to his lips, shoulders relaxed",
   },
   {
