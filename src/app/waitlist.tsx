@@ -100,7 +100,7 @@ export function WaitlistCta() {
               className="text-[20px] leading-8 tracking-[-0.015em]"
               id="waitlist-heading"
             >
-              Waitlist
+              Request a test kit
             </h2>
             <p className="mt-2 max-w-[38ch] text-[15px] leading-7 text-ink-2">
               We&rsquo;ll follow up by email to arrange delivery of your DNA
@@ -133,7 +133,7 @@ export function WaitlistCta() {
               disabled={state === "sending"}
               type="submit"
             >
-              {state === "sending" ? "…" : "Join"}
+              {state === "sending" ? "…" : "Request"}
             </button>
           </form>
         )}
