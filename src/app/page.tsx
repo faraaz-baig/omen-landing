@@ -1,8 +1,9 @@
 import Image from "next/image";
-import { SiteFooter } from "./footer";
 import { SiteHeader } from "./header";
-import { Testing } from "./testing";
 import { WaitlistCta, WaitlistProvider } from "./waitlist";
+// Testing section and footer are parked, not deleted — they return as-is.
+// import { SiteFooter } from "./footer";
+// import { Testing } from "./testing";
 
 export default function Home() {
   return (
@@ -65,10 +66,10 @@ export default function Home() {
           </div>
         </section>
 
-        <Testing />
+        {/* <Testing /> */}
       </main>
 
-      <SiteFooter />
+      {/* <SiteFooter /> */}
     </WaitlistProvider>
   );
 }
