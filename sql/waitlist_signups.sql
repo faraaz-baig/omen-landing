@@ -14,11 +14,17 @@
 -- message and no duplicate row is written.
 
 create table if not exists waitlist_signups (
-  id         bigserial primary key,
-  email      text not null,
-  source     text not null default 'landing',
-  created_at timestamptz not null default now()
+  id             bigserial primary key,
+  email          text not null,
+  source         text not null default 'landing',
+  created_at     timestamptz not null default now(),
+  -- The login whitelist. Everyone signs up; the people we've let in get
+  -- enable_account flipped to true and can request a sign-in link on /gate.
+  enable_account boolean not null default false
 );
+
+alter table waitlist_signups
+  add column if not exists enable_account boolean not null default false;
 
 create unique index if not exists waitlist_signups_email_key
   on waitlist_signups (lower(btrim(email)));

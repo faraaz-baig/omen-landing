@@ -27,27 +27,63 @@ export function createPasswordSessionToken(now = Date.now()) {
   return `${payload}.${signature}`;
 }
 
+/**
+ * v2 tokens carry the email of the person who clicked a sign-in link, so a
+ * session knows who it belongs to. v1 (shared-password) tokens stay valid —
+ * both verify below — so flipping /gate to email login logs nobody out.
+ */
+export function createEmailSessionToken(email: string, now = Date.now()) {
+  const expiresAt = Math.floor(now / 1000) + PASSWORD_SESSION_MAX_AGE;
+  const payload = `v2.${expiresAt}.${Buffer.from(email).toString("base64url")}`;
+
+  return `${payload}.${sign(payload)}`;
+}
+
 export function verifyPasswordSessionToken(token: string | undefined, now = Date.now()) {
+  return getSessionEmailFromToken(token, now) !== null;
+}
+
+/**
+ * Returns the session's email, "" for a legacy shared-password session, or
+ * null when the token is missing, malformed, expired, or forged.
+ */
+export function getSessionEmailFromToken(
+  token: string | undefined,
+  now = Date.now(),
+): string | null {
   if (!token) {
-    return false;
+    return null;
   }
 
-  const [version, expiresAtRaw, signature, ...extra] = token.split(".");
+  const parts = token.split(".");
+  const [version, expiresAtRaw] = parts;
   const expiresAt = Number(expiresAtRaw);
 
-  if (
-    version !== TOKEN_VERSION ||
-    !signature ||
-    extra.length > 0 ||
-    !Number.isSafeInteger(expiresAt) ||
-    expiresAt <= Math.floor(now / 1000)
-  ) {
-    return false;
+  if (!Number.isSafeInteger(expiresAt) || expiresAt <= Math.floor(now / 1000)) {
+    return null;
   }
 
-  const expected = sign(`${version}.${expiresAt}`);
+  if (version === TOKEN_VERSION && parts.length === 3) {
+    const signature = parts[2];
+    const expected = sign(`${version}.${expiresAt}`);
 
-  return timingSafeEqual(hash(signature), hash(expected));
+    return timingSafeEqual(hash(signature), hash(expected)) ? "" : null;
+  }
+
+  if (version === "v2" && parts.length === 4) {
+    const [, , encodedEmail, signature] = parts;
+    const expected = sign(`v2.${expiresAt}.${encodedEmail}`);
+
+    if (!timingSafeEqual(hash(signature), hash(expected))) {
+      return null;
+    }
+
+    const email = Buffer.from(encodedEmail, "base64url").toString();
+
+    return email.length > 0 ? email : null;
+  }
+
+  return null;
 }
 
 export function getPasswordSessionFromHeaders(headers: Headers) {
