@@ -34,12 +34,14 @@ async function loadPayload(): Promise<MapPayload> {
   }
   return {
     totalCalled: TOTAL_CALLED,
+    screenedTotal: 0,
     insightCount: INSIGHT_COUNT,
     live: false,
     chromosomes: CHROMOSOMES.map((c) => ({
       name: c.name,
       lengthMb: c.lengthMb,
       called: c.called,
+      screened: 0,
       markers: c.markers.map((m) => ({ ...m, outcome: "verdict" as const })),
     })),
   };

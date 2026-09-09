@@ -17,11 +17,14 @@ export interface ChromosomeData {
   name: string;
   lengthMb: number;
   called: number;
+  /** P/LP ClinVar positions screened on this chromosome (0 = screen not run). */
+  screened: number;
   markers: GeneMarker[];
 }
 
 export interface MapPayload {
   totalCalled: number;
+  screenedTotal: number;
   insightCount: number;
   chromosomes: ChromosomeData[];
   /** true when served by the omen-genomics pipeline, false on the static fallback */
@@ -91,7 +94,8 @@ function InfoCard({ sel, align }: { sel: Selection; align: "left" | "center" | "
             </p>
           </div>
           <p className="mt-1.5 text-[12px] leading-4 text-ink-2">
-            {c.called.toLocaleString()} positions read on this chromosome
+            {c.called.toLocaleString()} positions read
+            {c.screened > 0 && ` · ${c.screened.toLocaleString()} pathogenic positions screened`}
           </p>
           {c.markers.length > 0 ? (
             <div className="mt-2">
@@ -326,7 +330,7 @@ export function GenomeMap({ data }: { data: MapPayload }) {
           <p aria-live="polite" className="text-right text-[11px] tracking-[0.14em] text-ink-2 uppercase">
             {reading
               ? `Reading chromosome ${CHROMOSOMES[readIndex]?.name}… · ${readSoFar.toLocaleString()} positions`
-              : `${data.totalCalled.toLocaleString()} positions · 23andMe chip v5${data.live ? ' · live' : ''}`}
+              : `${data.totalCalled.toLocaleString()} positions${data.screenedTotal > 0 ? ` · ${data.screenedTotal.toLocaleString()} pathogenic sites screened` : ''} · 23andMe chip v5${data.live ? ' · live' : ''}`}
           </p>
         </div>
 
@@ -399,6 +403,14 @@ export function GenomeMap({ data }: { data: MapPayload }) {
                   positions. That covers most common insights; hollow ember dots mark genes that
                   genuinely need full sequencing.
                 </span>
+                {data.screenedTotal > 0 && (
+                  <span className="mt-2.5 block text-[13px] leading-5 text-ink-2">
+                    Your measured positions were also screened against{" "}
+                    {data.screenedTotal.toLocaleString()} ClinVar pathogenic variants — only
+                    well-reviewed hits (2+ submitters, no conflicts) would surface here, as
+                    guarded findings.
+                  </span>
+                )}
               </span>
             )}
           </span>
