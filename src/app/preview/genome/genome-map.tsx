@@ -2,7 +2,31 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CHROMOSOMES, INSIGHT_COUNT, TOTAL_CALLED, type ChromosomeData, type GeneMarker } from "./genome-data";
+export interface GeneMarker {
+  gene: string;
+  posMb: number;
+  state: "finding" | "known" | "guarded" | "locked";
+  label: string | null;
+  verdict: string | null;
+  outcome: "verdict" | "no_call" | "not_on_chip" | "pending_pharmcat";
+  genotype: string | null;
+  rsid: string | null;
+}
+
+export interface ChromosomeData {
+  name: string;
+  lengthMb: number;
+  called: number;
+  markers: GeneMarker[];
+}
+
+export interface MapPayload {
+  totalCalled: number;
+  insightCount: number;
+  chromosomes: ChromosomeData[];
+  /** true when served by the omen-genomics pipeline, false on the static fallback */
+  live: boolean;
+}
 
 /* Bar heights are proportional to real GRCh37 lengths. chr1 (249.25 Mb) sets
    the scale; MT (16.6 kb) would be invisible at any linear scale, so it draws
@@ -19,16 +43,26 @@ type Selection =
   | { kind: "chromosome"; chrom: ChromosomeData }
   | { kind: "marker"; chrom: ChromosomeData; marker: GeneMarker };
 
-/* One dot vocabulary, four states — the whole legend. */
-function MarkerDot({ state, big }: { state: GeneMarker["state"]; big?: boolean }) {
+/* One dot vocabulary — states plus the honest gaps (no-call / not-on-chip
+   render as faint hollow dots: hiding an unanswered question would
+   overstate coverage). */
+function MarkerDot({ state, outcome }: { state: GeneMarker["state"]; outcome?: GeneMarker["outcome"] }) {
   if (state === "finding")
-    return <span className={`${big ? "h-3 w-3" : "h-[11px] w-[11px]"} rounded-full bg-ember`} />;
+    return <span className="h-[11px] w-[11px] rounded-full bg-ember" />;
   if (state === "locked")
     return <span className="h-2 w-2 rounded-full border-[1.5px] border-ember bg-[#f3efe9]" />;
   if (state === "guarded")
     return <span className="h-2 w-2 rounded-full border-[1.5px] border-ink/40 bg-[#f3efe9]" />;
+  if (outcome && outcome !== "verdict")
+    return <span className="h-2 w-2 rounded-full border-[1.5px] border-ink/25 bg-[#f3efe9]" />;
   return <span className="h-2 w-2 rounded-full bg-[rgb(28_23_19/0.8)]" />;
 }
+
+const OUTCOME_TEXT: Record<string, string> = {
+  no_call: "The chip carried this position but couldn't read it in your sample — a no-call, not a variant.",
+  not_on_chip: "Your chip version never carried this position.",
+  pending_pharmcat: "Awaiting the PharmCAT pass for this gene.",
+};
 
 function shortVerdict(v: string) {
   const cut = v.indexOf(" — ");
@@ -56,23 +90,25 @@ function InfoCard({ sel, align }: { sel: Selection; align: "left" | "center" | "
                 : "no curated insights yet"}
             </p>
           </div>
+          <p className="mt-1.5 text-[12px] leading-4 text-ink-2">
+            {c.called.toLocaleString()} positions read on this chromosome
+          </p>
           {c.markers.length > 0 ? (
             <div className="mt-2">
               {c.markers.map((m) => (
                 <p className="flex items-center gap-2.5 border-t border-[#e7e6e4] py-2" key={m.gene}>
-                  <MarkerDot state={m.state} />
+                  <MarkerDot outcome={m.outcome} state={m.state} />
                   <span
-                    className={`text-[13px] leading-[18px] ${m.state === "locked" || m.state === "guarded" ? "text-ink-2" : "text-ink"}`}
+                    className={`text-[13px] leading-[18px] ${m.state === "locked" || m.state === "guarded" || m.outcome !== "verdict" ? "text-ink-2" : "text-ink"}`}
                   >
-                    {shortVerdict(m.verdict)}
+                    {m.verdict ? shortVerdict(m.verdict) : `${m.gene} — ${m.outcome.replace(/_/g, "-")}`}
                   </span>
                 </p>
               ))}
             </div>
           ) : (
             <p className="mt-2 text-[13px] leading-5 text-ink-2">
-              {c.called.toLocaleString()} positions read here — the curated markers live elsewhere,
-              but this data still powers ancestry-scale results.
+              No curated markers here yet — this data still powers ancestry-scale results.
             </p>
           )}
         </>
@@ -99,7 +135,9 @@ function InfoCard({ sel, align }: { sel: Selection; align: "left" | "center" | "
               </span>
             )}
           </div>
-          <p className="mt-2.5 text-[14px] leading-[21px] text-ink">{sel.marker.verdict}</p>
+          <p className="mt-2.5 text-[14px] leading-[21px] text-ink">
+            {sel.marker.verdict ?? OUTCOME_TEXT[sel.marker.outcome] ?? sel.marker.outcome}
+          </p>
           {sel.marker.rsid && (
             <p className="mt-2 font-mono text-[11px] text-ink-2">
               {sel.marker.rsid} · chr{c.name} · read from your file
@@ -209,7 +247,7 @@ function Chromosome({
       {state === "read" &&
         c.markers.map((m) => (
           <button
-            aria-label={`${m.gene} — ${shortVerdict(m.verdict)}`}
+            aria-label={`${m.gene} — ${m.verdict ? shortVerdict(m.verdict) : m.outcome.replace(/_/g, "-")}`}
             className="absolute left-1/2 z-[5] flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center p-[3px] transition-transform hover:scale-125"
             key={m.gene}
             onClick={() =>
@@ -228,7 +266,7 @@ function Chromosome({
             }}
             type="button"
           >
-            <MarkerDot state={m.state} />
+            <MarkerDot outcome={m.outcome} state={m.state} />
           </button>
         ))}
 
@@ -243,7 +281,7 @@ function Chromosome({
   );
 }
 
-export function GenomeMap() {
+export function GenomeMap({ data }: { data: MapPayload }) {
   /* readIndex sweeps across the chromosomes on mount: the file "reads in" one
      chromosome at a time, dots landing as each finishes. Reduced-motion jumps
      straight to done. */
@@ -253,6 +291,7 @@ export function GenomeMap() {
   const [showHelp, setShowHelp] = useState(false);
   const doneRef = useRef(false);
 
+  const CHROMOSOMES = data.chromosomes;
   const total = CHROMOSOMES.length;
   const reading = readIndex < total;
 
@@ -282,12 +321,12 @@ export function GenomeMap() {
       <div className="relative rounded-[var(--radius-frame)] bg-[#f3efe9] px-5 py-6 sm:px-8 sm:py-7">
         <div className="flex items-baseline justify-between gap-4">
           <h1 className="text-[11px] font-medium tracking-[0.16em] text-ink-2 uppercase">
-            Digvijay&rsquo;s genome · {INSIGHT_COUNT} things read from your file
+            Digvijay&rsquo;s genome · {data.insightCount} things read from your file
           </h1>
           <p aria-live="polite" className="text-right text-[11px] tracking-[0.14em] text-ink-2 uppercase">
             {reading
               ? `Reading chromosome ${CHROMOSOMES[readIndex]?.name}… · ${readSoFar.toLocaleString()} positions`
-              : `${TOTAL_CALLED.toLocaleString()} positions · 23andMe chip v5`}
+              : `${data.totalCalled.toLocaleString()} positions · 23andMe chip v5${data.live ? ' · live' : ''}`}
           </p>
         </div>
 
@@ -356,7 +395,7 @@ export function GenomeMap() {
                   something in plain English.
                 </span>
                 <span className="mt-2.5 block text-[13px] leading-5 text-ink-2">
-                  A chip reads about 0.02% of your genome — {TOTAL_CALLED.toLocaleString()} chosen
+                  A chip reads about 0.02% of your genome — {data.totalCalled.toLocaleString()} chosen
                   positions. That covers most common insights; hollow ember dots mark genes that
                   genuinely need full sequencing.
                 </span>

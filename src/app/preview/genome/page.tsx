@@ -1,15 +1,52 @@
 import { OmenMark } from "../../omen-mark";
-import { GenomeMap } from "./genome-map";
+import { GenomeMap, type MapPayload } from "./genome-map";
+import { CHROMOSOMES, INSIGHT_COUNT, TOTAL_CALLED } from "./genome-data";
 
 export const metadata = { title: "heyomen.com" };
+export const dynamic = "force-dynamic";
 
 /**
- * The genome page: the dashboard header and the map, nothing else yet. The
- * header is the landing header's anatomy (three zones, lockup dead-center)
- * with dashboard options — page label left, data-source chip and account on
- * the right. Route lives behind the same gate as the rest of /preview.
+ * The genome page: the dashboard header and the map. The map payload comes
+ * from the omen-genomics pipeline when it's reachable (server-side fetch —
+ * the admin token never leaves this process); otherwise the committed static
+ * snapshot serves, so the deployed site keeps working until the Contabo box
+ * hosts the API.
  */
-export default function GenomePage() {
+async function loadPayload(): Promise<MapPayload> {
+  const base = process.env.GENOMICS_API_URL;
+  const token = process.env.GENOMICS_ADMIN_TOKEN;
+  if (base && token) {
+    try {
+      const headers = { authorization: `Bearer ${token}` };
+      const files = (await (
+        await fetch(`${base}/api/files`, { headers, cache: "no-store" })
+      ).json()) as { files: { _id: string; status: string }[] };
+      const latest = files.files.find((f) => f.status === "interpreted");
+      if (latest) {
+        const genome = await (
+          await fetch(`${base}/api/files/${latest._id}/genome`, { headers, cache: "no-store" })
+        ).json();
+        return { ...(genome as Omit<MapPayload, "live">), live: true };
+      }
+    } catch {
+      // fall through to the static snapshot
+    }
+  }
+  return {
+    totalCalled: TOTAL_CALLED,
+    insightCount: INSIGHT_COUNT,
+    live: false,
+    chromosomes: CHROMOSOMES.map((c) => ({
+      name: c.name,
+      lengthMb: c.lengthMb,
+      called: c.called,
+      markers: c.markers.map((m) => ({ ...m, outcome: "verdict" as const })),
+    })),
+  };
+}
+
+export default async function GenomePage() {
+  const data = await loadPayload();
   return (
     <main className="min-h-dvh bg-paper">
       <header className="relative flex h-14 items-center justify-between px-4 sm:h-[92px] sm:px-5">
@@ -38,7 +75,7 @@ export default function GenomePage() {
         </div>
       </header>
 
-      <GenomeMap />
+      <GenomeMap data={data} />
     </main>
   );
 }
