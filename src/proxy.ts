@@ -48,5 +48,10 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/preview/:path*", "/eve/:path*"],
+  // /preview is deliberately ungated for now — the owner chose to publish
+  // their own demo genome. /eve stays closed: it fronts a funded model
+  // endpoint, and its 401 is the backstop when the Vercel rewrite is not in
+  // play. Restore "/preview/:path*" here the day the surface carries anyone
+  // else's data.
+  matcher: ["/eve/:path*"],
 };
