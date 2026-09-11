@@ -48,9 +48,9 @@ const Closing: Component = () => {
 
       <div class="closing__footer">
         <span class="closing__footer-left">
-          {'London     |     New York     |     Hong Kong'}
+          {'London     |     New York     |     Bangalore'}
         </span>
-        <span class="closing__footer-center">© Omen 2026</span>
+        <span class="closing__footer-center">© Omen Division</span>
         <a class="closing__footer-right" href="#privacy">
           Privacy
         </a>

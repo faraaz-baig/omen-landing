@@ -207,10 +207,17 @@ button:hover .arrow-swap__arrow:last-child {
 }
 
 .nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: #fff;
   font-size: 24px;
   font-weight: 500;
   line-height: 30px;
+}
+
+.nav__logo-mark {
+  flex-shrink: 0;
 }
 
 .nav__links {
