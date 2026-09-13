@@ -50,7 +50,11 @@ function splitText(el: HTMLElement) {
   const base = Number(el.dataset.splitDelay ?? 0);
   let i = 0;
   text.split(/\n/).forEach((line, li) => {
-    if (li > 0) el.appendChild(document.createElement('br'));
+    if (li > 0) {
+      // trailing space keeps words joined when <br> is hidden on mobile
+      el.appendChild(document.createTextNode(' '));
+      el.appendChild(document.createElement('br'));
+    }
     line.split(' ').forEach((word, wi) => {
       if (wi > 0) el.appendChild(document.createTextNode(' '));
       const w = document.createElement('span');

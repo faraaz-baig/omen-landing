@@ -17,6 +17,7 @@ const StepTop: Component<{ index: string }> = (props) => (
 const Process: Component = () => {
   return (
     <section class="process" id="how-it-works">
+      <div class="process__label mono-label">HOW OMEN WORKS / 01—04</div>
       <div class="process__rail">
         {/* 01 / SEQUENCE */}
         <div class="step step--sequence step--dark" data-reveal>

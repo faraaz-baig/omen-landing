@@ -17,4 +17,13 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 render(() => <App />, root!);
-initAnimations();
+
+if (!new URLSearchParams(window.location.search).has('noanim')) {
+  initAnimations();
+} else {
+  document.querySelectorAll('[data-split]').forEach((el) => el.classList.add('is-in'));
+  document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-in'));
+  document
+    .querySelectorAll<HTMLElement>('.cascade-line')
+    .forEach((el) => (el.style.opacity = '1'));
+}

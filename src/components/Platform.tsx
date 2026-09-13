@@ -49,15 +49,19 @@ const Platform: Component = () => {
         <div class="clinician__panel">
           <div class="evidence">
             <div class="evidence__row evidence__row--head">
-              <div class="evidence__cell evidence__cell--variant mono-label">VARIANT</div>
+              <div class="evidence__cell evidence__cell--variant mono-label">
+                VARIANT<span class="evidence__join"> / IMPLICATION</span>
+              </div>
               <div class="evidence__cell evidence__cell--implication">IMPLICATION</div>
               <div class="evidence__cell evidence__cell--confidence">CONFIDENCE</div>
             </div>
             {variants.map((v) => (
               <div class="evidence__row">
-                <div class="evidence__cell evidence__cell--variant">{v.name}</div>
-                <div class="evidence__cell evidence__cell--implication">
-                  {v.implication}
+                <div class="evidence__pair">
+                  <div class="evidence__cell evidence__cell--variant">{v.name}</div>
+                  <div class="evidence__cell evidence__cell--implication">
+                    {v.implication}
+                  </div>
                 </div>
                 <div
                   class="evidence__cell evidence__cell--confidence"

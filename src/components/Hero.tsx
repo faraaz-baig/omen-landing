@@ -47,7 +47,9 @@ const Hero: Component = () => {
               data-reveal
               style={{ 'transition-delay': `${i * 110}ms` }}
             >
-              <img class="promise__icon" src={p.icon} alt="" />
+              <div class="promise__icon-wrap">
+                <img class="promise__icon" src={p.icon} alt="" />
+              </div>
               <div>
                 <div class="promise__title">{p.title}</div>
                 <div class="promise__body">{p.body}</div>
