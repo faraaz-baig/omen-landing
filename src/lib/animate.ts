@@ -34,6 +34,20 @@ function initSmoothScroll() {
     const target = document.querySelector(id);
     if (target) {
       e.preventDefault();
+      if (id === '#join') {
+        // back to the top of the site, then focus the hero email input
+        const focusInput = () =>
+          document
+            .querySelector<HTMLInputElement>('.waitlist__input')
+            ?.focus({ preventScroll: true });
+        if (lenis) {
+          lenis.scrollTo(0, { onComplete: focusInput });
+        } else {
+          window.scrollTo(0, 0);
+          focusInput();
+        }
+        return;
+      }
       lenis?.scrollTo(target as HTMLElement, { offset: 0 });
     }
   });
@@ -206,6 +220,25 @@ function initCardParallax() {
   update();
 }
 
+/* ———————————————— Process rail edge blurs ————————————————
+   Left blur appears once scrolled; right blur hides at the end. */
+
+function initRailEdges() {
+  const rail = document.querySelector<HTMLElement>('.process__rail');
+  const section = document.querySelector<HTMLElement>('.process');
+  if (!rail || !section) return;
+
+  const update = () => {
+    const max = rail.scrollWidth - rail.clientWidth;
+    section.classList.toggle('process--scrolled', rail.scrollLeft > 8);
+    section.classList.toggle('process--end', rail.scrollLeft >= max - 8);
+  };
+
+  rail.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
 /* ———————————————— Entry point ———————————————— */
 
 export function initAnimations() {
@@ -214,6 +247,7 @@ export function initAnimations() {
   initParallax();
   initCascade();
   initCardParallax();
+  initRailEdges();
 
   const split = Array.from(
     document.querySelectorAll<HTMLElement>('[data-split]'),

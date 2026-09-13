@@ -96,22 +96,20 @@ const Categories: Component = () => {
         <ArrowCircle />
       </button>
 
-      {rows.map((row) => (
-        <div class="categories__row">
-          {row.map((cat, i) => (
-            <div class="category">
-              <div class="category__title" data-split data-split-delay={i * 120}>
-                {cat.title}
-              </div>
-              <div class="category__list" data-cascade>
-                {cat.items.map((item) => (
-                  <span class="cascade-line">{item}</span>
-                ))}
-              </div>
+      <div class="categories__grid">
+        {rows.flat().map((cat, i) => (
+          <div class="category">
+            <div class="category__title" data-split data-split-delay={(i % 3) * 120}>
+              {cat.title}
             </div>
-          ))}
-        </div>
-      ))}
+            <div class="category__list" data-cascade>
+              {cat.items.map((item) => (
+                <span class="cascade-line">{item}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div class="categories__note">
         Areas we’re exploring, not a launch feature list. Availability will
