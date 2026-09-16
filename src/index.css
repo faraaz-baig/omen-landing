@@ -138,7 +138,7 @@ button:hover .arrow-swap__arrow:last-child {
   flex-direction: column;
   gap: 44px;
   height: 816px;
-  padding: 120px 96px 44px;
+  padding: 120px var(--px) 44px;
   background: var(--hero-bg);
   overflow: clip;
 }
@@ -168,8 +168,8 @@ button:hover .arrow-swap__arrow:last-child {
 .nav {
   position: fixed;
   top: 22px;
-  left: 96px;
-  right: 96px;
+  left: var(--px);
+  right: var(--px);
   display: flex;
   align-items: center;
   justify-content: space-between;
